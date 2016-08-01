@@ -1,0 +1,29 @@
+{
+  "name": "mars-rover-rce",
+  "version": "0.0.1",
+  "description": "UCT Mars Curiosity Rover RCE (Rover Compute Element)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm -rf ./build",
+    "build": "npm run clean && babel ./src --presets @woodywoodsta/babel-preset-node -d ./build",
+    "watch": "npm run clean && babel ./src --presets @woodywoodsta/babel-preset-node -d ./build -w"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WoodyWoodsta/mars-rover-rce.git"
+  },
+  "author": {
+    "name": "Sean Wood",
+    "email": "woodywoodsta@gmail.com"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WoodyWoodsta/mars-rover-rce/issues"
+  },
+  "homepage": "https://github.com/WoodyWoodsta/mars-rover-rce#readme",
+  "devDependencies": {
+    "babel-cli": "^6",
+    "@woodywoodsta/babel-preset-node": "^1"
+  }
+}
