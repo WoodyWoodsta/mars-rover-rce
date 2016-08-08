@@ -7,7 +7,7 @@ const log = debug('rce:router');
 const router = new Router();
 
 // Routes
-router.post('./test', ctx => {
+router.post('/test', ctx => {
   ctx.body = 'Hello world';
   ctx.status = 200;
   log('Received test POST');

@@ -5,7 +5,7 @@ import rceIO from './rce-io';
 
 const log = debug('rce:socket-server');
 
-export default function init() {
+export function init() {
   // Namespaces
   return new Socket('rce-io');
 }
