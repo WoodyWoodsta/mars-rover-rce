@@ -8,7 +8,9 @@
     "clean": "rm -rf ./build",
     "build": "npm run clean && babel ./src --presets @woodywoodsta/babel-preset-node -d ./build",
     "watch": "npm run clean && babel ./src --presets @woodywoodsta/babel-preset-node -d ./build -w",
-    "start": "DEBUG=rce* node -r ./resources/babel-external-helpers ./build/index.js"
+    "start": "DEBUG=rce* node -r ./resources/babel-external-helpers ./build/index.js",
+    "debug": "DEBUG=rce* node --inspect --debug-brk -r ./resources/babel-external-helpers ./build/index.js",
+    "echo": "echo $PATH"
   },
   "repository": {
     "type": "git",
