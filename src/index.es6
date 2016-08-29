@@ -1,11 +1,11 @@
 /* index.es6 */
 import debug from 'debug';
 
-import server from './server';
-import board from './hardware/board';
+import startup from './sequences/startup';
 
 const log = debug('rce:main');
 
 log('Mars Curiosity Rover RCE is starting up...');
-server();
-board();
+
+// Fire the startup sequence
+startup();

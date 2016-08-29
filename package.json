@@ -8,6 +8,8 @@
     "clean": "rm -rf ./build",
     "build": "npm run clean && babel ./src --presets @woodywoodsta/babel-preset-node -d ./build",
     "watch": "npm run clean && babel ./src --presets @woodywoodsta/babel-preset-node -d ./build -w",
+    "build-remote": "babel ./src --presets @woodywoodsta/babel-preset-node -d /home/sean/edisonSSH/rce/mars-rover-rce/build",
+    "watch-remote": "babel ./src --presets @woodywoodsta/babel-preset-node -d /home/sean/edisonSSH/rce/mars-rover-rce/build -w",
     "start": "DEBUG=rce* node -r ./resources/babel-external-helpers ./build/index.js",
     "debug": "DEBUG=rce* node --inspect --debug-brk -r ./resources/babel-external-helpers ./build/index.js",
     "echo": "echo $PATH"
