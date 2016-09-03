@@ -8,6 +8,7 @@ export const config = {
   hardware: {
     servoShield: {
       i2cAddress: 0x40,
+      controller: 'PCA9685',
     },
 
     servoPins: {
@@ -31,4 +32,8 @@ export const config = {
       driveRearRight: [90, 90],
     },
   },
+};
+
+export const foo = {
+  bar: 'Hello World',
 };

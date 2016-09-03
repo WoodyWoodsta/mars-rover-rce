@@ -7,7 +7,7 @@ import koaLogger from 'koa-logger';
 
 import router from './routes';
 import * as socket from './servers/socket';
-import { config } from '../config';
+import { config } from './config';
 
 const log = debug('rce:main');
 

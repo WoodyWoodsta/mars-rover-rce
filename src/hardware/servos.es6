@@ -2,7 +2,7 @@
 import debug from 'debug';
 
 import * as five from 'johnny-five';
-import { config } from '../../config';
+import { config } from '../config';
 
 const log = debug('rce:board-servos');
 
@@ -23,7 +23,7 @@ export function init() {
        */
       fl: new five.Servo({
         address: config.hardware.servoShield.i2cAddress,
-        controller: 'PCA9685',
+        controller: config.hardware.servoShield.controller,
         type: 'continuous',
         deadband: config.hardware.servoDeadband.driveFrontLeft,
         pin: config.hardware.servoPins.driveFrontLeft,
@@ -33,7 +33,7 @@ export function init() {
        */
       fr: new five.Servo({
         address: config.hardware.servoShield.i2cAddress,
-        controller: 'PCA9685',
+        controller: config.hardware.servoShield.controller,
         type: 'continuous',
         deadband: config.hardware.servoDeadband.driveFrontRight,
         pin: config.hardware.servoPins.driveFrontRight,
@@ -43,7 +43,7 @@ export function init() {
        */
       rl: new five.Servo({
         address: config.hardware.servoShield.i2cAddress,
-        controller: 'PCA9685',
+        controller: config.hardware.servoShield.controller,
         type: 'continuous',
         deadband: config.hardware.servoDeadband.driveRearLeft,
         pin: config.hardware.servoPins.driveRearLeft,
@@ -53,7 +53,7 @@ export function init() {
        */
       rr: new five.Servo({
         address: config.hardware.servoShield.i2cAddress,
-        controller: 'PCA9685',
+        controller: config.hardware.servoShield.controller,
         type: 'continuous',
         deadband: config.hardware.servoDeadband.driveRearRight,
         pin: config.hardware.servoPins.driveRearRight,
@@ -65,7 +65,7 @@ export function init() {
        */
       fl: new five.Servo({
         address: config.hardware.servoShield.i2cAddress,
-        controller: 'PCA9685',
+        controller: config.hardware.servoShield.controller,
         pin: config.hardware.servoPins.steerFrontLeft,
       }),
       /**
@@ -73,7 +73,7 @@ export function init() {
        */
       fr: new five.Servo({
         address: config.hardware.servoShield.i2cAddress,
-        controller: 'PCA9685',
+        controller: config.hardware.servoShield.controller,
         pin: config.hardware.servoPins.steerFrontRight,
       }),
       /**
@@ -81,7 +81,7 @@ export function init() {
        */
       rl: new five.Servo({
         address: config.hardware.servoShield.i2cAddress,
-        controller: 'PCA9685',
+        controller: config.hardware.servoShield.controller,
         pin: config.hardware.servoPins.steerRearLeft,
       }),
       /**
@@ -89,7 +89,7 @@ export function init() {
        */
       rr: new five.Servo({
         address: config.hardware.servoShield.i2cAddress,
-        controller: 'PCA9685',
+        controller: config.hardware.servoShield.controller,
         pin: config.hardware.servoPins.steerRearRight,
       }),
     },
@@ -99,7 +99,7 @@ export function init() {
        */
       pan: new five.Servo({
         address: config.hardware.servoShield.i2cAddress,
-        controller: 'PCA9685',
+        controller: config.hardware.servoShield.controller,
         pin: config.hardware.servoPins.headPan,
       }),
       /**
@@ -107,7 +107,7 @@ export function init() {
        */
       tilt: new five.Servo({
         address: config.hardware.servoShield.i2cAddress,
-        controller: 'PCA9685',
+        controller: config.hardware.servoShield.controller,
         pin: config.hardware.servoPins.headTilt,
       }),
     },
