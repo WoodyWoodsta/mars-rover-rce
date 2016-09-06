@@ -3,15 +3,15 @@
  * The very first sequence run at startup of the rover
  *
  * Sequence:
- *  - Start the servers
- *  - Initialise the board
+ *  - Start the servers ✓
+ *  - Initialise the board ✓
  *  - Register board listeners
  *  - Initialise analog inputs
  *  - Check vitals: only proceed if vitals pass
- *  - Initialise leds
- *  - Initialise servos
+ *  - Initialise leds ✓
+ *  - Initialise servos ✓
  *  - Initialise proximity sensors
- *  - Initialise camera
+ *  - Initialise camera ✓
  *  - Establish connection with RSVP server
  *    - Sockets
  *    - WebRTC
@@ -23,6 +23,8 @@ import server from '../server';
 import * as boardDriver from '../hardware/board';
 import * as leds from '../hardware/leds';
 import * as servos from '../hardware/servos';
+import * as camera from '../hardware/camera';
+
 
 const log = debug('rce:startup-sequence');
 
@@ -45,4 +47,7 @@ function onBoardReady() {
 
   // Initialise the Servos
   servos.init();
+
+  // Initialise the camera
+  camera.init();
 }

@@ -12,3 +12,7 @@ export default function init(socket) {
     log('Received a test message on rce-io');
   });
 }
+
+export function sendTele(type, source, data) {
+  
+}

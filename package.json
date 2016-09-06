@@ -38,6 +38,7 @@
     "koa-bodyparser": "^3",
     "koa-logger": "^2",
     "koa-router": "^7",
-    "koa-socket": "^4"
+    "koa-socket": "^4",
+    "object-path": "^0.11.1"
   }
 }

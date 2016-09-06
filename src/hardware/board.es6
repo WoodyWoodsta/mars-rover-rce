@@ -8,6 +8,7 @@ const log = debug('rce:board');
 
 export const board = new five.Board({
   io: new Edison(),
+  repl: false,
 });
 
 export function init() {
