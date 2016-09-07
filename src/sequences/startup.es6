@@ -49,5 +49,5 @@ function onBoardReady() {
   servos.init();
 
   // Initialise the camera
-  camera.init();
+  // camera.init();
 }

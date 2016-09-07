@@ -12,12 +12,17 @@ const log = debug('rce:store');
 
 /**
  * State data of the system in general
+ * SOURCE
  */
-export const systemState = {
+export const rceState = {
+  _watched: {
+  },
+  _type: 'source',
 };
 
 /**
  * State data of hardware, for telemetry purposes
+ * SOURCE
  */
 export const hardwareState = {
   board: {
@@ -47,10 +52,12 @@ export const hardwareState = {
     proximity: ['rceIO'],
     servos: ['rceIO'],
   },
+  _type: 'source',
 };
 
 /**
  * Control input data, received from the controller
+ * SINK
  */
 export const control = {
   driveInput: {
@@ -59,8 +66,8 @@ export const control = {
   },
 
   _watched: {
-
   },
+  _type: 'sink',
 };
 
 /**
