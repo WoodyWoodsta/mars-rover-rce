@@ -12,7 +12,7 @@
  *  - Initialise servos ✓
  *  - Initialise proximity sensors
  *  - Initialise camera ✓
- *  - Establish connection with RSVP server
+ *  - Establish connection with RSVP server <-- This may not be needed, the RCE is a server itself!
  *    - Sockets
  *    - WebRTC
  *  - Fire "standard system test" sequence
@@ -24,7 +24,7 @@ import * as boardDriver from '../hardware/board';
 import * as leds from '../hardware/leds';
 import * as servos from '../hardware/servos';
 import * as camera from '../hardware/camera';
-
+import * as system from '../system';
 
 const log = debug('rce:startup-sequence');
 
@@ -50,4 +50,6 @@ function onBoardReady() {
 
   // Initialise the camera
   // camera.init();
+
+  system.startProcessMonitoring();
 }

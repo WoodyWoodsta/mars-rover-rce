@@ -16,6 +16,7 @@ let retry = 0;
  * @type {Object}
  */
 export let hw = {};
+export let camProcessPid;
 
 /**
  * Initialise the camera
@@ -46,6 +47,8 @@ function start() {
       return;
     }
   });
+
+  camProcessPid = camProcess.pid;
 
   process.on('beforeExit', () => {
     stop();

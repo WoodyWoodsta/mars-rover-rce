@@ -5,6 +5,10 @@ export const config = {
     port: 3000,
   },
 
+  systemMonitor: {
+    period: 1000,
+  },
+
   hardware: {
     servoShield: {
       i2cAddress: 0x40,

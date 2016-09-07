@@ -19,7 +19,7 @@ export function onData(message) {
       }
       break;
     case 'server':
-      if ()
+      // if ()
     default:
 
   }

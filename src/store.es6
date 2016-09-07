@@ -2,11 +2,10 @@
 /**
  * Store. Operates on a data-driven model in terms of socket notifications
  */
-
 import debug from 'debug';
 import objectPath from 'object-path';
 
-import { rceIO } from './servers/rce-io';
+import { rceIO } from './server';
 
 const log = debug('rce:store');
 
@@ -15,7 +14,15 @@ const log = debug('rce:store');
  * SOURCE
  */
 export const rceState = {
+  rceCpu: undefined,
+  rceMemory: undefined,
+  camCpu: undefined,
+  camMemory: undefined,
   _watched: {
+    rceCpu: ['rceIO'],
+    rceMemory: ['rceIO'],
+    camCpu: ['rceIO'],
+    camMemory: ['rceIO'],
   },
   _type: 'source',
 };
@@ -33,6 +40,7 @@ export const hardwareState = {
   },
   camera: {
     initialised: false,
+    running: false,
   },
   leds: {
     initialised: false,
@@ -74,7 +82,7 @@ export const control = {
  * The entire set of stores
  */
 export const stores = {
-  systemState,
+  rceState,
   hardwareState,
   control,
 };

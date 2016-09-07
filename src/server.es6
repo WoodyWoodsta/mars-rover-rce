@@ -11,6 +11,8 @@ import { config } from './config';
 
 const log = debug('rce:main');
 
+export let rceIO;
+
 export default function init() {
   log('Starting HTTP server...');
 
@@ -22,9 +24,9 @@ export default function init() {
   app.use(router());
 
   // RCE IO
-  const rceIo = socket.init();
-  rceIo.attach(app);
-  socket.addListeners(rceIo);
+  rceIO = socket.init();
+  rceIO.attach(app);
+  socket.addListeners(rceIO);
 
   // === Connect ===
   app.listen(config.server.port);
