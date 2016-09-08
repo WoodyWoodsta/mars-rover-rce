@@ -10,7 +10,7 @@ import { hw as leds } from '../hardware/leds';
 export function onData(message) {
   switch (message.data.storeName) {
     case 'control':
-      if (message.data.path === 'control.testLED.isOn') {
+      if (message.data.path === 'testLED.isOn') {
         if (message.data.data.newValue) {
           leds.indicator.on();
         } else {
@@ -20,7 +20,7 @@ export function onData(message) {
       break;
     case 'server':
       // if ()
+      break;
     default:
-
   }
 }

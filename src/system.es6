@@ -46,11 +46,19 @@ camMonitor.on('error', (err) => {
 });
 
 rceMonitor.on('monitored', (pid, stats) => {
-  store.set('rceState.rceCpu', stats['%CPU']);
-  store.set('rceState.rceMemory', stats['%MEM']);
+  store.rceState.set('rceCpu', stats['%CPU']);
+  store.rceState.set('rceMemory', stats['%MEM']);
 });
 
 camMonitor.on('monitored', (pid, stats) => {
-  store.set('rceState.camCpu', stats['%CPU']);
-  store.set('rceState.camMemory', stats['%MEM']);
+  store.rceState.set('camCpu', stats['%CPU']);
+  store.rceState.set('camMemory', stats['%MEM']);
+});
+
+store.hardwareState.on('camera.running-changed', (event) => {
+  if (event.newValue) {
+    camMonitor.start();
+  } else {
+    camMonitor.stop();
+  }
 });

@@ -5,6 +5,7 @@ import path from 'path';
 
 import { config } from '../config';
 import { killAll } from '../utils/kill-all';
+import * as store from '../store';
 
 const log = debug('rce:camera');
 
@@ -24,12 +25,14 @@ export let camProcessPid;
 export function init(callback) {
   start();
   log('Camera intialised');
+  store.hardwareState.set('camera.initialised', true);
+  store.hardwareState.set('camera.running', true);
 }
 
 export function stop() {
   killAll(camProcess.pid, 'SIGINT');
   log('Camera stopped');
-  // TODO: Notify of the camera stopping
+  store.hardwareState.set('camera.running', false);
 }
 
 // === Private ===
@@ -41,7 +44,7 @@ function start() {
     if (++retry !== config.hardware.cameraMaxRetry) {
       start();
     } else {
-      // TODO: Notify of failed intialisation
+      store.hardwareState.set('camera.running', false);
       log('Camera max retries reached. Closing subsystem');
       retry = 0;
       return;
