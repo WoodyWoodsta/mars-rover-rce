@@ -1,7 +1,5 @@
 /* rce-io-translator.es6 */
-// import * as store from '../store';
-// import { rceIO } from './rce-io';
-import { hw as leds } from '../hardware/leds';
+import * as store from '../store';
 
 /**
  * Handle incomming messages of type data
@@ -10,16 +8,10 @@ import { hw as leds } from '../hardware/leds';
 export function onData(message) {
   switch (message.data.storeName) {
     case 'control':
-      if (message.data.path === 'testLED.isOn') {
-        if (message.data.data.newValue) {
-          leds.indicator.on();
-        } else {
-          leds.indicator.off();
-        }
-      }
+      store.control.set(message.data.path, message.data.data.newValue);
       break;
     case 'server':
-      // if ()
+      store.server.set(message.data.path, message.data.data.newValue);
       break;
     default:
   }

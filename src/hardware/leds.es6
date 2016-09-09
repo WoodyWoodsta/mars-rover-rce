@@ -1,7 +1,8 @@
 /* leds.es6 */
 import debug from 'debug';
-
 import * as five from 'johnny-five';
+
+import * as store from '../store';
 
 const log = debug('rce:board-leds');
 
@@ -19,7 +20,11 @@ export function init() {
     indicator: new five.Led(13),
   };
 
+  // Listeners
+  store.control.on('testLED.isOn-changed', _onTestLEDIsOnChanged);
+
   log('LEDs initialised');
+  store.hardwareState.set('leds.initialised', true);
 }
 
 /**
@@ -39,4 +44,9 @@ export function tempBlink(ledInst, pulse, counts) {
       count = 0;
     }
   });
+}
+
+// === Private ===
+function _onTestLEDIsOnChanged(event) {
+  hw.indicator[(event.newValue) ? 'on' : 'off']();
 }

@@ -43,21 +43,32 @@ class DataStore extends EventEmitter {
    *                                          array of notifyees or callback functions :D
    */
   set(path, data, notifyees = []) {
-    const notified = this._watched[path];
+    // Keep track of who is notified to prevent event duplication
+    const notified = [];
 
-    // Record and mutate
     let dotIndex = 0;
-    const oldValue = objectPath.get(this, path);
-    objectPath.set(this, path, data);
 
+    // Copy old data and mutat
+    let oldValue = {};
+    objectPath.set(oldValue, path, objectPath.set(this, path, data));
+
+    // Copy new data
+    let newValue = {};
+    objectPath.set(newValue, path, data);
+
+    // Emit notifications
     while (dotIndex > -1) {
       const sub = path.slice(0, dotIndex || undefined);
-      this.emit(`${sub}-changed`, { path, newValue: data, oldValue });
+      this.emit(`${sub}-changed`, { path, newValue: objectPath.get(newValue, sub), oldValue: objectPath.get(oldValue, sub) });
+
+      if (this._watched[sub]) {
+        notified.push(sub);
+      }
 
       dotIndex = path.indexOf('.', dotIndex + 1);
     }
 
-    // Custom notify based on passed in `notifyees`
+    // Custom notify based on passed in `notifyees`. Will not duplicate
     if (notifyees) {
       customNotify(notified, this.name, path, data, oldValue, notifyees);
     }
@@ -143,6 +154,10 @@ export const control = new DataStore('control', 'sink', {
   driveInput: {
     xMag: 0,
     yMag: 0,
+  },
+
+  testLED: {
+    isOn: false,
   },
 });
 
