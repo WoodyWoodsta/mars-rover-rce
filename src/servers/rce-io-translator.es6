@@ -8,10 +8,10 @@ import * as store from '../store';
 export function onData(message) {
   switch (message.data.storeName) {
     case 'control':
-      store.control.set(message.data.path, message.data.data.newValue);
+      store.control.receiveData(message.data.fullPath, message.data.path, message.data.data.newValue);
       break;
     case 'server':
-      store.server.set(message.data.path, message.data.data.newValue);
+      store.server.receiveData(message.data.fullPath, message.data.path, message.data.data.newValue);
       break;
     default:
   }
