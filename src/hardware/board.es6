@@ -6,15 +6,16 @@ import Edison from 'edison-io';
 
 const log = debug('rce:board');
 
-export const board = new five.Board({
-  io: new Edison(),
-  repl: false,
-});
+export let board;
 
 export function init() {
   log('Setting up Edison board...');
 
-  board.on('ready', () => {
+  board = new five.Board({
+    io: new Edison(),
+    repl: false,
+  })
+  .on('ready', () => {
     log('Board ready');
   });
 }

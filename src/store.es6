@@ -105,6 +105,9 @@ class DataStore extends EventEmitter {
  * @member {Number} camMemory The percentage of physically available memory taken up by the cam process
  */
 export const rceState = new DataStore('rceState', 'source', {
+  rceIO: {
+    connected: false,
+  },
   rceCpu: undefined,
   rceMemory: undefined,
   camCpu: undefined,
