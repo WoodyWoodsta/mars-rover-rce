@@ -36,6 +36,31 @@ export const config = {
       driveRearRight: [90, 90],
     },
 
+    proximityController: 'HCSR04',
+    // How frequently to update measurements
+    proximityFreq: 25,
+
+    proximityPins: {
+      frontSensor: 'A0',
+      rearSensor: 'A1',
+      headSensor: 'A2',
+    },
+
+    // Threshold at which to warn of obstacle
+    proximityThreshholds: {
+      warn: {
+        frontSensor: 200,
+        rearSensor: 200,
+        headSensor: 100,
+      },
+
+      shutdown: {
+        frontSensor: 30,
+        rearSensor: 30,
+        headSensor: 30,
+      },
+    },
+
     cameraMaxRetry: 3,
     cameraStartCmdLine: '/usr/local/bin/mjpg_streamer -i "/usr/local/lib/input_uvc.so -d /dev/video0 -n -r 640x480 -f 30" -o "/usr/local/lib//output_http.so -n -p 8080 -w /usr/local/www"',
   },

@@ -99,10 +99,11 @@ class DataStore extends EventEmitter {
 
 /**
  * Store for the RCE state and telemetry
- * @member {Number} rceCpu    The percentage CPU usage taken up by the RCE Node process
- * @member {Number} rceMemory The percentage of physically available memory taken up by the RCE Node process
- * @member {Number} camCpu    The percentage CPU usage taken up by the cam process
- * @member {Number} camMemory The percentage of physically available memory taken up by the cam process
+ * @member {Number} rceCpu      The percentage CPU usage taken up by the RCE Node process
+ * @member {Number} rceMemory   The percentage of physically available memory taken up by the RCE Node process
+ * @member {Number} camCpu      The percentage CPU usage taken up by the cam process
+ * @member {Number} camMemory   The percentage of physically available memory taken up by the cam process
+ * @member {Object} controller  The state of the rover function controller
  */
 export const rceState = new DataStore('rceState', 'source', {
   rceIO: {
@@ -112,11 +113,17 @@ export const rceState = new DataStore('rceState', 'source', {
   rceMemory: undefined,
   camCpu: undefined,
   camMemory: undefined,
+
+  controller: {
+    sequence: [],
+    sequenceState: undefined,
+  },
 }, {
   rceCpu: ['rceIO'],
   rceMemory: ['rceIO'],
   camCpu: ['rceIO'],
   camMemory: ['rceIO'],
+  controller: ['rceIO'],
 });
 
 /**
@@ -144,6 +151,22 @@ export const hardwareState = new DataStore('hardwareState', 'source', {
   },
   proximity: {
     initialised: false,
+    running: false,
+    values: {
+      front: 0,
+      rear: 0,
+      head: 0,
+    },
+    warn: {
+      front: false,
+      rear: false,
+      head: false,
+    },
+    shutdown: {
+      front: false,
+      rear: false,
+      head: false,
+    },
   },
   servos: {
     initialised: false,

@@ -25,6 +25,7 @@ import * as boardDriver from '../hardware/board';
 import * as leds from '../hardware/leds';
 import * as servos from '../hardware/servos';
 import * as camera from '../hardware/camera';
+import * as proximity from '../hardware/proximity';
 import * as system from '../system';
 import * as store from '../store';
 
@@ -58,5 +59,10 @@ function onBoardReady() {
   // Initialise the camera
   camera.init();
 
+  // Initialise the ultrasonic sensors
+  proximity.init();
+  proximity.start();
+
   system.startProcessMonitoring();
+  leds.tempBlink(leds.hw.indicator, 50, 5);
 }

@@ -15,7 +15,7 @@ export default function init(socket) {
     log('Received a test message on rce-io');
   });
 
-  socket.on('data', (message) => {
-    rceIOTranslator.onData(message);
-  });
+  socket.on('data', rceIOTranslator.onData);
+
+  socket.on('post', rceIOTranslator.onPost);
 }

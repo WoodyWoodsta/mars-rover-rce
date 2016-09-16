@@ -16,3 +16,13 @@ export function onData(message) {
     default:
   }
 }
+
+export function onPost(event) {
+  switch (event.type) {
+    case 'upload-sequence':
+      store.rceState.set('controller.sequence', event.data);
+      break;
+    default:
+
+  }
+}
