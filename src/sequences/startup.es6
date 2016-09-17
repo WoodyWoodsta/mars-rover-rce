@@ -36,8 +36,10 @@ export default function seq() {
 
   store.rceState.on('rceIO.connected-changed', (event) => {
     if (event.newValue) {
-      boardDriver.init();
-      regBoardListeners();
+      if (!store.hardwareState.board.initialised) {
+        boardDriver.init();
+        regBoardListeners();
+      }
     }
   });
 }
@@ -50,18 +52,26 @@ function regBoardListeners() {
 
 function onBoardReady() {
   // Initialise the leds
-  leds.init();
+  if (!store.hardwareState.leds.initialised) {
+    leds.init();
+  }
   leds.tempBlink(leds.hw.indicator, 100, 3);
 
   // Initialise the Servos
-  servos.init();
+  if (!store.hardwareState.servos.initialised) {
+    servos.init();
+  }
 
   // Initialise the camera
-  camera.init();
+  // if (!store.hardwareState.camera.initialised) {
+  //   camera.init();
+  // }
 
   // Initialise the ultrasonic sensors
-  proximity.init();
-  proximity.start();
+  if (!store.hardwareState.proximity.initialised) {
+    // proximity.init();
+    // proximity.start();
+  }
 
   system.startProcessMonitoring();
   leds.tempBlink(leds.hw.indicator, 50, 5);

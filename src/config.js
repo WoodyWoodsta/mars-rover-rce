@@ -10,6 +10,9 @@ export const config = {
   },
 
   hardware: {
+    wheelPitch: 70,
+    wheelSpan: 120,
+
     servoShield: {
       i2cAddress: 0x40,
       controller: 'PCA9685',
@@ -64,8 +67,4 @@ export const config = {
     cameraMaxRetry: 3,
     cameraStartCmdLine: '/usr/local/bin/mjpg_streamer -i "/usr/local/lib/input_uvc.so -d /dev/video0 -n -r 640x480 -f 30" -o "/usr/local/lib//output_http.so -n -p 8080 -w /usr/local/www"',
   },
-};
-
-export const foo = {
-  bar: 'Hello World',
 };

@@ -2,7 +2,7 @@
 import debug from 'debug';
 import * as five from 'johnny-five';
 
-import * as config from '../config'
+import { config } from '../config';
 import * as store from '../store';
 
 const log = debug('rce:proximity');
@@ -36,7 +36,7 @@ export function init() {
   };
 
   log('Proximity initialised');
-  store.hardwareState.set('leds.initialised', true);
+  store.hardwareState.set('proximity.initialised', true);
 }
 
 export function start() {

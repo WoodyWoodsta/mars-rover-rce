@@ -3,6 +3,7 @@ import debug from 'debug';
 
 import * as five from 'johnny-five';
 import { config } from '../config';
+import * as store from '../store';
 
 const log = debug('rce:board-servos');
 
@@ -113,5 +114,6 @@ export function init() {
     },
   };
 
+  store.hardwareState.set('servos.initialised', true);
   log('Servos initialised');
 }

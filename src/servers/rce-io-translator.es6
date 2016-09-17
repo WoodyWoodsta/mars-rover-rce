@@ -18,9 +18,9 @@ export function onData(message) {
 }
 
 export function onPost(event) {
-  switch (event.type) {
+  switch (event.data.type) {
     case 'upload-sequence':
-      store.rceState.set('controller.sequence', event.data);
+      store.rceState.set('controller.sequence', event.data.payload);
       break;
     default:
 
