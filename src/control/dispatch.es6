@@ -17,10 +17,21 @@
 
  */
 
-import * as config from '../config';
+import { config } from '../config';
 import * as state from './state';
+import * as store from '../store';
 
 // === Translators ===
+
+export function tempCmdTrans(cmd) {
+  const servos = {
+    driveFrontLeft: {
+      value: cmd.params.value,
+    },
+  };
+
+  _dispatch(new state.StateDriver({ servos }, 'ease-out'));
+}
 
 /**
  * Translates the DriveCmd into outputs for dispatch
@@ -33,16 +44,30 @@ export function driveCmdTrans(cmd) {
   };
 
   // Dispatch with a default cubic curve
-  _dispatch(new state.StateDriver(servos, 'cubic'));
+  _dispatch(new state.StateDriver({ servos }, 'ease-out'));
 }
 
 // === Private ===
 /**
-* Send the hardware signals to the output loop
+* Send the hardware signals to the output loop, manage execution time, if required
 * @param  {StateDriver} driver The object of hardware signals
 */
 function _dispatch(driver) {
-  // TODO: Check for control type
+  if (store.control.type === 'rose') {
+    // TODO: Execute the command for a certain period of time
+  }
+
+  // Send the drivering signals to the loop
+  state.setSignals(driver);
+}
+
+/**
+ * Drive hardware signals for a specified length of time
+ * @param  {StateDriver} driver The object of hardware signals
+ * @param  {StateDriver} driver The object of hardware signals
+ */
+function _execute(driver) {
+
 }
 
 /**
@@ -50,13 +75,19 @@ function _dispatch(driver) {
  * @param  {Number} arcFactor The factor by which the rover should arc/turn
  */
 function _computeArcRotation(arcFactor) {
-  const servos = {};
+  const servos = {
+    steerFrontLeft: { value: 0 },
+    steerFrontRight: { value: 0 },
+    steerRearLeft: { value: 0 },
+    steerRearRight: { value: 0 },
+  };
+
   const arcs = _computeArc(arcFactor);
 
-  servos[`turnFront${arcs.smallSide}`].value = arcs.smallAngle;
-  servos[`turnFront${arcs.largeSide}`].value = arcs.largeAngle;
-  servos[`turnRear${arcs.smallSide}`].value = -1 * arcs.smallAngle;
-  servos[`turnRear${arcs.largeSide}`].value = -1 * arcs.largeAngle;
+  servos[`steerFront${arcs.smallSide}`].value = arcs.smallAngle;
+  servos[`steerFront${arcs.largeSide}`].value = arcs.largeAngle;
+  servos[`steerRear${arcs.smallSide}`].value = -1 * arcs.smallAngle;
+  servos[`steerRear${arcs.largeSide}`].value = -1 * arcs.largeAngle;
 
   return servos;
 }
@@ -69,14 +100,20 @@ function _computeArcRotation(arcFactor) {
  * @param  {String} direction The direction of the driving ['fwd'|'rev']
  */
 function _computeWheelVelocities(arcFactor, velocity, direction) {
-  const servos = {};
+  const servos = {
+    driveFrontLeft: { value: 0 },
+    driveFrontRight: { value: 0 },
+    driveRearLeft: { value: 0 },
+    driveRearRight: { value: 0 },
+  };
+
   const arcs = _computeArc(arcFactor);
   const diffFactor = arcs.smallRadius / arcs.largeRadius;
 
-  servos[`turnFront${arcs.smallSide}`].value = velocity * diffFactor * ((direction === 'fwd') ? 1 : -1);
-  servos[`turnFront${arcs.largeSide}`].value = velocity * ((direction === 'fwd') ? 1 : -1);
-  servos[`turnRear${arcs.smallSide}`].value = velocity * diffFactor * ((direction === 'fwd') ? 1 : -1);
-  servos[`turnRear${arcs.largeSide}`].value = velocity * ((direction === 'fwd') ? 1 : -1);
+  servos[`driveFront${arcs.smallSide}`].value = velocity * diffFactor * ((direction === 'fwd') ? 1 : -1);
+  servos[`driveFront${arcs.largeSide}`].value = velocity * ((direction === 'fwd') ? 1 : -1);
+  servos[`driveRear${arcs.smallSide}`].value = velocity * diffFactor * ((direction === 'fwd') ? 1 : -1);
+  servos[`driveRear${arcs.largeSide}`].value = velocity * ((direction === 'fwd') ? 1 : -1);
 
   return servos;
 }

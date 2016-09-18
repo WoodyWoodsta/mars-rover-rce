@@ -10,6 +10,10 @@ export const config = {
   },
 
   hardware: {
+    stateLoopInterval: 10,
+    stateLoopMaxDuration: 5000,
+    stateLoopPennerFamily: 'Sine',
+
     wheelPitch: 70,
     wheelSpan: 120,
 
@@ -28,7 +32,7 @@ export const config = {
       steerRearLeft: 6,
       steerRearRight: 7,
       headPan: 8,
-      headTilt: 9,
+      headPitch: 9,
     },
 
     servoDeadband: {

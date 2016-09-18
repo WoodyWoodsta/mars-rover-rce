@@ -4,6 +4,7 @@
  */
 
 import * as store from '../store';
+import * as dispatch from './dispatch';
 
 export function init() {
   // Setup listeners
@@ -16,6 +17,14 @@ export function deinit() {
 }
 
 // Interactive Relays
-function _driveInputRelay() {
-  
+function _driveInputRelay(event) {
+  const direction = (event.newValue.yMag < 0) ? 'rev' : 'fwd';
+
+  dispatch.driveCmdTrans({
+    params: {
+      arc: event.newValue.xMag,
+      velocity: Math.abs(event.newValue.yMag),
+      direction,
+    },
+  });
 }

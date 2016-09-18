@@ -117,6 +117,7 @@ export const rceState = new DataStore('rceState', 'source', {
   controller: {
     sequence: [],
     sequenceState: undefined,
+    stateLoopRunning: false,
   },
 }, {
   rceCpu: ['rceIO'],
@@ -170,6 +171,18 @@ export const hardwareState = new DataStore('hardwareState', 'source', {
   },
   servos: {
     initialised: false,
+    values: {
+      driveFrontLeft: 0,
+      driveFrontRight: 0,
+      driveRearLeft: 0,
+      driveRearRight: 0,
+      steerFrontLeft: 0,
+      steerFrontRight: 0,
+      steerRearLeft: 0,
+      steerRearRight: 0,
+      headPan: 0,
+      headPitch: 0,
+    },
   },
 }, {
   board: ['rceIO'],

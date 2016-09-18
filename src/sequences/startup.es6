@@ -28,6 +28,8 @@ import * as camera from '../hardware/camera';
 import * as proximity from '../hardware/proximity';
 import * as system from '../system';
 import * as store from '../store';
+import * as stateLoop from '../control/state';
+import * as switcher from '../control/switcher';
 
 const log = debug('rce:startup-sequence');
 
@@ -74,5 +76,7 @@ function onBoardReady() {
   }
 
   system.startProcessMonitoring();
+
+  stateLoop.start();
   leds.tempBlink(leds.hw.indicator, 50, 5);
 }
