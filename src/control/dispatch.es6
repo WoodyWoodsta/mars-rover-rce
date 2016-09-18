@@ -23,6 +23,10 @@ import * as store from '../store';
 
 // === Translators ===
 
+/**
+ * Test command translator for low bandwith functional testing
+ * @param  {Object} cmd The command to be translated
+ */
 export function tempCmdTrans(cmd) {
   const servos = {
     driveFrontLeft: {
@@ -118,6 +122,11 @@ function _computeWheelVelocities(arcFactor, velocity, direction) {
   return servos;
 }
 
+/**
+ * Compute the arc dimensions of the wheels for a given arc factor
+ * @param  {Number} arcFactor The factor by which the rover should turn/arc
+ * @return {Object}           An object of the calculated dimensions
+ */
 function _computeArc(arcFactor) {
   const largeSide = (arcFactor < 0) ? 'Right' : 'Left';
   const smallSide = (largeSide === 'Right') ? 'Left' : 'Right';

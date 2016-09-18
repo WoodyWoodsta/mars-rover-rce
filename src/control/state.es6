@@ -78,6 +78,11 @@ const setpoints = {
   },
 };
 
+/**
+ * A set of control values to impress upon the hardware
+ * @param {Object}  params      An object of control outputs
+ * @param {String}  timingFunc  A timing function to apply to all control outputs that do not have one specified
+ */
 export class StateDriver {
   constructor(params, timingFunc) {
     this.servos = params.servos;
@@ -115,7 +120,8 @@ export function stop() {
 }
 
 /**
- * Update the setpoint signals for the loop to interpolate to (asynchronously)
+ * Update the setpoint signals for the loop to interpolate to (asynchronously). If there is a change between the driving signal
+ * and the setpoint, reset the age of the state change motion
  * @param {StateDriver} driver The object of desired hardware signal setpoints
  */
 export function setSignals(driver) {
@@ -130,6 +136,9 @@ export function setSignals(driver) {
 }
 
 // === Private ===
+/**
+ * The loop which will be executed at the specified interval
+ */
 function _stateLoop() {
   // Check servo value changes
   Object.keys(setpoints.servos).forEach((servo) => {
@@ -137,6 +146,12 @@ function _stateLoop() {
   });
 }
 
+/**
+ * Evaluate the change between the driving signal and the current signal state.
+ * If there is a difference, the change will be effected.
+ * @param  {String} component   The name of the component in the setpoints object
+ * @param  {String} pathToState Path in the store to the current state of that component
+ */
 function _evalChange(component, pathToState) {
   const state = objectPath.get(store.hardwareState, pathToState);
   const driver = setpoints.servos[component];
@@ -147,6 +162,10 @@ function _evalChange(component, pathToState) {
   }
 }
 
+/**
+ * Calculate the next value of the hardware outputs given the setpoints and the transient point in the motion curve
+ * @param  {String} servo The name of the servo upon which to effect a change
+ */
 function _effectServoChange(servo) {
   const state = store.hardwareState.servos.values[servo];
   const driver = setpoints.servos[servo];
@@ -154,9 +173,9 @@ function _effectServoChange(servo) {
   const time = driver._age;
   const delta = driver.value - state;
 
-
   let newState;
 
+  // Use the specified timging function
   switch (driver.timingFunc) {
     case 'ease-out':
       newState = penner[`easeOut${config.hardware.stateLoopPennerFamily}`](time, state, delta, duration);
@@ -170,18 +189,6 @@ function _effectServoChange(servo) {
     default:
   }
 
-  // log(`State: ${state}, Driving Val: ${driver.value}, Delta: ${delta}, Time: ${time}, Duration: ${duration}, New State: ${newState}`);
+  // TODO: Consider setting the servos directly and updating the store at a later stage
   store.hardwareState.set(`servos.values.${servo}`, newState);
-}
-
-/**
- * Generate a driver object with the age details appended
- * @param  {Object} driver The object containing the driving signal for the hardware component
- * @return {Object}        The appended object
- */
-function _populateSetpointObj(driver) {
-  return {
-    ...driver,
-    _age: 0,
-  };
 }

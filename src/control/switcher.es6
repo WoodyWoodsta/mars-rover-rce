@@ -13,6 +13,10 @@ const log = debug('rce:control-switcher');
 store.control.on('type-changed', _onControlTypeChanged);
 
 // === Private ===
+/**
+ * Switch the control type when the client changes it
+ * @param  {Object} event The incomming property change event
+ */
 function _onControlTypeChanged(event) {
   if (event.newValue === 'interactive' && event.oldValue !== 'interactive') {
     if (event.oldValue === 'rose') {
