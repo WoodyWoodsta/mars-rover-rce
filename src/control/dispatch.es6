@@ -17,6 +17,8 @@
 
  */
 
+import objectPath from 'object-path';
+
 import { config } from '../config';
 import * as state from './state';
 import * as store from '../store';
@@ -57,8 +59,10 @@ export function driveCmdTrans(cmd) {
 * @param  {StateDriver} driver The object of hardware signals
 */
 function _dispatch(driver) {
-  if (store.control.type === 'rose') {
-    // TODO: Execute the command for a certain period of time
+  // If a duration is supplied, send to the executor
+  if (driver.duration !== Infinity) {
+    _execute(driver);
+    return;
   }
 
   // Send the drivering signals to the loop
@@ -71,7 +75,18 @@ function _dispatch(driver) {
  * @param  {StateDriver} driver The object of hardware signals
  */
 function _execute(driver) {
+  const origValues = {};
 
+  Object.keys(driver.servos).forEach((servo) => {
+    objectPath.set(origValues, `servos.${servo}.value`, store.hardwareState.servos.values[servo]);
+    objectPath.set(origValues, `servos.${servo}.timingFunc`, driver.servos[servo].timingFunc);
+    objectPath.set(origValues, `servos.${servo}.velocity`, driver.servos[servo].velocity);
+  });
+
+  state.setSignals(driver);
+  setTimeout(() => {
+    state.setSignals(new state.StateDriver(origValues));
+  }, driver.duration);
 }
 
 /**

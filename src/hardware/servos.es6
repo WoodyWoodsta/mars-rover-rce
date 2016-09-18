@@ -2,6 +2,8 @@
 import debug from 'debug';
 
 import * as five from 'johnny-five';
+import objectPath from 'object-path';
+
 import { config } from '../config';
 import * as store from '../store';
 
@@ -110,62 +112,62 @@ export function init() {
 
   // TODO: Do some servo centering and stuff here
 
-  _registerListeners();
-
   store.hardwareState.set('servos.initialised', true);
+  setInterval(_customEmitServos, config.hardware.telemetryInterval);
+
   log('Servos initialised');
 }
 
+export function setServo(servo, value) {
+  let signal;
+  switch (servo) {
+    // TODO: Update the driving ones before making the servo continuous
+    case 'driveFrontLeft':
+      signal = (value * 70) + 90;
+      break;
+    case 'driveFrontRight':
+      signal = (value * 70) + 90;
+      break;
+    case 'driveRearLeft':
+      signal = (value * 70) + 90;
+      break;
+    case 'driveRearRight':
+      signal = (value * 70) + 90;
+      break;
+    case 'steerFrontLeft':
+      signal = value + 90;
+      break;
+    case 'steerFrontRight':
+      signal = value + 90;
+      break;
+    case 'steerRearLeft':
+      signal = value + 90;
+      break;
+    case 'steerRearRight':
+      signal = value + 90;
+      break;
+    case 'headPan':
+      signal = (value * 70) + 90;
+      break;
+    case 'headPitch':
+      signal = (value * 70) + 90;
+      break;
+    default:
+
+  }
+
+  hw[servo].to(signal);
+}
+
 // === Private ===
-function _registerListeners() {
-  store.hardwareState.on('servos.values.driveFrontLeft-changed', _onDriveFrontLeftValueChanged);
-  store.hardwareState.on('servos.values.driveFrontRight-changed', _onDriveFrontRightValueChanged);
-  store.hardwareState.on('servos.values.driveRearLeft-changed', _onDriveRearLeftValueChanged);
-  store.hardwareState.on('servos.values.driveRearRight-changed', _onDriveRearRightValueChanged);
-  store.hardwareState.on('servos.values.steerFrontLeft-changed', _onSteerFrontLeftValueChanged);
-  store.hardwareState.on('servos.values.steerFrontRight-changed', _onSteerFrontRightValueChanged);
-  store.hardwareState.on('servos.values.steerRearLeft-changed', _onSteerRearLeftValueChanged);
-  store.hardwareState.on('servos.values.steerRearRight-changed', _onSteerRearRightValueChanged);
-  store.hardwareState.on('servos.values.headPan-changed', _onHeadPanValueChanged);
-  store.hardwareState.on('servos.values.headPitch-changed', _onHeadPitchValueChanged);
-}
-
-function _onDriveFrontLeftValueChanged(event) {
-  hw.driveFrontLeft.to((event.newValue * 70) + 90);
-}
-
-function _onDriveFrontRightValueChanged(event) {
-  hw.driveFrontRight.to(event.newValue);
-}
-
-function _onDriveRearLeftValueChanged(event) {
-  hw.driveRearLeft.to(event.newValue);
-}
-
-function _onDriveRearRightValueChanged(event) {
-  hw.driveRearRight.to(event.newValue);
-}
-
-function _onSteerFrontLeftValueChanged(event) {
-  hw.steerFrontLeft.to(event.newValue);
-}
-
-function _onSteerFrontRightValueChanged(event) {
-  hw.steerFrontRight.to(event.newValue);
-}
-
-function _onSteerRearLeftValueChanged(event) {
-  hw.steerRearLeft.to(event.newValue);
-}
-
-function _onSteerRearRightValueChanged(event) {
-  hw.steerRearRight.to(event.newValue);
-}
-
-function _onHeadPanValueChanged(event) {
-  hw.headPan.to(event.newValue);
-}
-
-function _onHeadPitchValueChanged(event) {
-  hw.headPitch.to(event.newValue);
+/**
+ * Send servo telemtry synchronously
+ */
+function _customEmitServos() {
+  Object.keys(hw).forEach((servo) => {
+    if (objectPath.get(_customEmitServos, servo) !== store.hardwareState.servos.values[servo]) {
+      store.hardwareState.sync(`servos.values.${servo}`);
+      _customEmitServos[servo] = store.hardwareState.servos.values[servo];
+    }
+  });
 }

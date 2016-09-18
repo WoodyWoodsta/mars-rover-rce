@@ -7,6 +7,7 @@ import debug from 'debug';
 
 import * as store from '../store';
 import * as interactive from './interactive';
+import * as rose from './rose';
 
 const log = debug('rce:control-switcher');
 
@@ -20,7 +21,7 @@ store.control.on('type-changed', _onControlTypeChanged);
 function _onControlTypeChanged(event) {
   if (event.newValue === 'interactive' && event.oldValue !== 'interactive') {
     if (event.oldValue === 'rose') {
-      // TODO: De-initialise RoSE control
+      rose.deinit();
     }
 
     // Init interactive control
@@ -32,6 +33,7 @@ function _onControlTypeChanged(event) {
     }
 
     // Init RoSE control
+    rose.init();
     log('RoSE control initialised');
   }
 }

@@ -27,6 +27,12 @@ export function deinit() {
 function _driveInputRelay(event) {
   const direction = (event.newValue.yMag < 0) ? 'rev' : 'fwd';
 
+  // dispatch.tempCmdTrans({
+  //   params: {
+  //     value: event.newValue.yMag,
+  //   },
+  // });
+
   dispatch.driveCmdTrans({
     params: {
       arc: event.newValue.xMag,

@@ -10,9 +10,11 @@ export const config = {
   },
 
   hardware: {
+    telemetryInterval: 500,
+
     stateLoopInterval: 10,
-    stateLoopMaxDuration: 5000,
-    stateLoopPennerFamily: 'Sine',
+    stateLoopMaxDuration: 700,
+    stateLoopPennerFamily: 'Quad',
 
     wheelPitch: 70,
     wheelSpan: 120,

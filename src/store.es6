@@ -46,6 +46,10 @@ class DataStore extends EventEmitter {
     this.receiveData(fullPath, fullPath, data, notifyees);
   }
 
+  sync(fullPath, notifyees = []) {
+    this.receiveData(fullPath, fullPath, objectPath.get(this, fullPath), notifyees);
+  }
+
   receiveData(fullPath, path, data, notifyees = []) {
     // Keep track of who is notified to prevent event duplication
     const notified = [];
@@ -116,7 +120,7 @@ export const rceState = new DataStore('rceState', 'source', {
 
   controller: {
     sequence: [],
-    sequenceState: undefined,
+    sequenceState: 'off',
     stateLoopRunning: false,
   },
 }, {
@@ -190,7 +194,7 @@ export const hardwareState = new DataStore('hardwareState', 'source', {
   camera: ['rceIO'],
   leds: ['rceIO'],
   proximity: ['rceIO'],
-  servos: ['rceIO'],
+  'servos.initialised': ['rceIO'],
 });
 
 /**
