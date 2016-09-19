@@ -98,6 +98,7 @@ export class StateDriver {
   constructor(params, timingFunc) {
     this.servos = params.servos;
     this.duration = params.duration || Infinity;
+    this.cmdDuration = params.cmdDuration || params.duration || Infinity;
 
     Object.keys(this.servos).forEach((servo) => {
       // Set collective or default timing function

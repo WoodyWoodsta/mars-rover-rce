@@ -21,6 +21,18 @@ export function deinit() {
 }
 
 // === Private ===
-_seqStateRelay(event) {
-  
+function _seqStateRelay(event) {
+  if (event.newValue === 'running') {
+    console.log('Dispatching sequence command');
+    dispatch.tempCmdTrans({
+      params: {
+        value: 1,
+        duration: 5000,
+      },
+      callback: () => {
+        console.log('The command has executed!');
+        store.rceState.set('controller.sequenceState', 'off');
+      },
+    });
+  }
 }

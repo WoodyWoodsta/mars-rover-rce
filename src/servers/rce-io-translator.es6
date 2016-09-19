@@ -22,6 +22,9 @@ export function onPost(event) {
     case 'upload-sequence':
       store.rceState.set('controller.sequence', event.data.payload);
       break;
+    case 'playback-sequence':
+      store.rceState.set('controller.sequenceState', 'running');
+      break;
     default:
 
   }

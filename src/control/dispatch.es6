@@ -17,11 +17,14 @@
 
  */
 
+import debug from 'debug';
 import objectPath from 'object-path';
 
 import { config } from '../config';
 import * as state from './state';
 import * as store from '../store';
+
+const log = debug('rce:cmd-dispatch');
 
 // === Translators ===
 
@@ -36,7 +39,10 @@ export function tempCmdTrans(cmd) {
     },
   };
 
-  _dispatch(new state.StateDriver({ servos }, 'ease-out'));
+  _dispatch(new state.StateDriver({
+    servos,
+    duration: cmd.params.duration || Infinity,
+  }, 'ease-out'), cmd.callback);
 }
 
 /**
@@ -50,18 +56,22 @@ export function driveCmdTrans(cmd) {
   };
 
   // Dispatch with a default cubic curve
-  _dispatch(new state.StateDriver({ servos }, 'ease-out'));
+  _dispatch(new state.StateDriver({
+    servos,
+    duration: cmd.params.duration || Infinity,
+  }, 'ease-out'), cmd.callback);
 }
 
 // === Private ===
 /**
 * Send the hardware signals to the output loop, manage execution time, if required
-* @param  {StateDriver} driver The object of hardware signals
+* @param  {StateDriver} driver    The object of hardware signals
+* @param  {Function}    callback  Function to be called when the execution has completed (based on duration)
 */
-function _dispatch(driver) {
+function _dispatch(driver, callback) {
   // If a duration is supplied, send to the executor
   if (driver.duration !== Infinity) {
-    _execute(driver);
+    _execute(driver, callback);
     return;
   }
 
@@ -71,10 +81,10 @@ function _dispatch(driver) {
 
 /**
  * Drive hardware signals for a specified length of time
- * @param  {StateDriver} driver The object of hardware signals
- * @param  {StateDriver} driver The object of hardware signals
+ * @param  {StateDriver}  driver    The object of hardware signals
+ * @param  {Function}     callback  Function to be called when the execution has completed (based on duration)
  */
-function _execute(driver) {
+function _execute(driver, callback) {
   const origValues = {};
 
   Object.keys(driver.servos).forEach((servo) => {
@@ -84,9 +94,21 @@ function _execute(driver) {
   });
 
   state.setSignals(driver);
+  // Signal duration timing
   setTimeout(() => {
     state.setSignals(new state.StateDriver(origValues));
   }, driver.duration);
+
+  // Cmd duration timing
+  if (state.cmdDuration !== Infinity) {
+    setTimeout(() => {
+      if (callback) {
+        callback();
+      } else {
+        log('No callback provided for command execution');
+      }
+    }, state.cmdDuration);
+  }
 }
 
 /**
