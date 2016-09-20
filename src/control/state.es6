@@ -14,7 +14,7 @@ import * as servos from '../hardware/servos';
 let interval;
 
 const log = debug('rce:state-driver');
-const setpoints = {
+export const setpoints = {
   servos: {
     driveFrontLeft: {
       value: 0,

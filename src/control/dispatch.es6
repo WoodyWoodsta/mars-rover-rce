@@ -46,6 +46,25 @@ export function tempCmdTrans(cmd) {
 }
 
 /**
+ * Test command translator for low bandwith functional testing
+ * @param  {Object} cmd The command to be translated
+ */
+export function tempCmdTrans2(cmd) {
+  const servos = {
+    driveFrontLeft: {
+      value: Math.abs(cmd.params.duration.value / 5),
+    },
+  };
+
+  const driver = new state.StateDriver({
+    servos,
+    duration: cmd.params.duration.value * 1000 || Infinity,
+  }, 'ease-out');
+
+  _dispatch(driver, cmd.callback);
+}
+
+/**
  * Translates the DriveCmd into outputs for dispatch
  * @param  {DriveCmd} cmd The DriveCmd to be translated
  */
@@ -69,6 +88,8 @@ export function driveCmdTrans(cmd) {
 * @param  {Function}    callback  Function to be called when the execution has completed (based on duration)
 */
 function _dispatch(driver, callback) {
+  // log('Dispatching');
+  // log(driver);
   // If a duration is supplied, send to the executor
   if (driver.duration !== Infinity) {
     _execute(driver, callback);
@@ -88,16 +109,19 @@ function _execute(driver, callback) {
   const origValues = {};
 
   Object.keys(driver.servos).forEach((servo) => {
-    objectPath.set(origValues, `servos.${servo}.value`, store.hardwareState.servos.values[servo]);
+    objectPath.set(origValues, `servos.${servo}.value`, state.setpoints.servos[servo].value);
     objectPath.set(origValues, `servos.${servo}.timingFunc`, driver.servos[servo].timingFunc);
     objectPath.set(origValues, `servos.${servo}.velocity`, driver.servos[servo].velocity);
   });
 
   state.setSignals(driver);
-  // Signal duration timing
-  setTimeout(() => {
-    state.setSignals(new state.StateDriver(origValues));
-  }, driver.duration);
+
+  if (driver.duration !== Infinity) {
+    // Signal duration timing
+    setTimeout(() => {
+      state.setSignals(new state.StateDriver(origValues));
+    }, driver.duration);
+  }
 
   // Cmd duration timing
   if (state.cmdDuration !== Infinity) {
@@ -107,7 +131,7 @@ function _execute(driver, callback) {
       } else {
         log('No callback provided for command execution');
       }
-    }, state.cmdDuration);
+    }, driver.cmdDuration);
   }
 }
 
