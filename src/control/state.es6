@@ -19,70 +19,70 @@ export const setpoints = {
     driveFrontLeft: {
       value: 0,
       start: 0,
-      velocity: 1,
+      velocity: 0,
       timingFunc: 'ease-out',
       _age: 0,
     },
     driveFrontRight: {
       value: 0,
       start: 0,
-      velocity: 1,
+      velocity: 0,
       timingFunc: 'ease-out',
       _age: 0,
     },
     driveRearLeft: {
       value: 0,
       start: 0,
-      velocity: 1,
+      velocity: 0,
       timingFunc: 'ease-out',
       _age: 0,
     },
     driveRearRight: {
       value: 0,
       start: 0,
-      velocity: 1,
+      velocity: 0,
       timingFunc: 'ease-out',
       _age: 0,
     },
     steerFrontLeft: {
       value: 0,
       start: 0,
-      velocity: 1,
+      velocity: 0,
       timingFunc: 'ease-out',
       _age: 0,
     },
     steerFrontRight: {
       value: 0,
       start: 0,
-      velocity: 1,
+      velocity: 0,
       timingFunc: 'ease-out',
       _age: 0,
     },
     steerRearLeft: {
       value: 0,
       start: 0,
-      velocity: 1,
+      velocity: 0,
       timingFunc: 'ease-out',
       _age: 0,
     },
     steerRearRight: {
       value: 0,
       start: 0,
-      velocity: 1,
+      velocity: 0,
       timingFunc: 'ease-out',
       _age: 0,
     },
     headPan: {
       value: 0,
       start: 0,
-      velocity: 1,
+      velocity: 0,
       timingFunc: 'ease-in-out',
       _age: 0,
     },
     headPitch: {
       value: 0,
       start: 0,
-      velocity: 1,
+      velocity: 0,
       timingFunc: 'ease-in-out',
       _age: 0,
     },
@@ -96,7 +96,7 @@ export const setpoints = {
  */
 export class StateDriver {
   constructor(params, timingFunc) {
-    this.servos = params.servos;
+    this.servos = params.servos || {};
     this.duration = params.duration || Infinity;
     this.cmdDuration = params.cmdDuration || params.duration || Infinity;
 
@@ -108,7 +108,7 @@ export class StateDriver {
 
       // Set default velocity
       if (!this.servos[servo].velocity) {
-        this.servos[servo].velocity = 1;
+        this.servos[servo].velocity = 0;
       }
     });
   }
@@ -182,24 +182,28 @@ function _evalChange(component, pathToState) {
  */
 function _effectServoChange(servo) {
   const driver = setpoints.servos[servo];
-  const duration = driver.velocity * config.hardware.stateLoopMaxDuration;
+  const duration = (1 - driver.velocity) * config.hardware.stateLoopMaxDuration;
   const time = driver._age;
   const delta = driver.value - driver.start;
 
   let newState;
 
   // Use the specified timging function
-  switch (driver.timingFunc) {
-    case 'ease-out':
-      newState = penner[`easeOut${config.hardware.stateLoopPennerFamily}`](time, driver.start, delta, duration);
-      break;
-    case 'ease-in-out':
-      newState = penner[`easeInOut${config.hardware.stateLoopPennerFamily}`](time, driver.start, delta, duration);
-      break;
-    case 'linear':
-      newState = penner.linear(time, driver.start, delta, duration);
-      break;
-    default:
+  if (time <= duration) {
+    switch (driver.timingFunc) {
+      case 'ease-out':
+        newState = penner[`easeOut${config.hardware.stateLoopPennerFamily}`](time, driver.start, delta, duration);
+        break;
+      case 'ease-in-out':
+        newState = penner[`easeInOut${config.hardware.stateLoopPennerFamily}`](time, driver.start, delta, duration);
+        break;
+      case 'linear':
+        newState = penner.linear(time, driver.start, delta, duration);
+        break;
+      default:
+    }
+  } else {
+    newState = driver.value;
   }
 
   // TODO: Consider setting the servos directly and updating the store at a later stage

@@ -41,7 +41,7 @@ export function tempCmdTrans(cmd) {
 
   _dispatch(new state.StateDriver({
     servos,
-    duration: cmd.params.duration || Infinity,
+    duration: cmd.params.duration.value || Infinity,
   }, 'ease-out'), cmd.callback);
 }
 
@@ -65,19 +65,46 @@ export function tempCmdTrans2(cmd) {
 }
 
 /**
+ * Translates the PauseCmd into outputs for dispatch
+ * @param  {PauseCmd} cmd The PauseCmd to be translated
+ */
+export function pauseCmdTrans(cmd) {
+  // Simply dispatch an empty state driver with a duration
+  _dispatch(new state.StateDriver({ duration: cmd.params.duration.value || 0 }), cmd.callback);
+}
+
+/**
+ * Translates the SingleWheelRotateCmd into outputs for dispatch
+ * @param  {SingleWheelRotateCmd} cmd The SingleWheelRotateCmd to be translated
+ */
+export function singleWheelRotateCmdTrans(cmd) {
+  const servos = {};
+
+  servos[_resolveServoName(cmd.params.wheel.value, 'steer')] = {
+    value: cmd.params.angle.value,
+    velocity: cmd.params.velocity.value / 100,
+  };
+
+  _dispatch(new state.StateDriver({
+    servos,
+    cmdDuration: (cmd.params.waitForComplete.value) ? _computeDuration(cmd.params.velocity.value / 100) : Infinity,
+  }), cmd.callback);
+}
+
+/**
  * Translates the DriveCmd into outputs for dispatch
  * @param  {DriveCmd} cmd The DriveCmd to be translated
  */
 export function driveCmdTrans(cmd) {
   const servos = {
-    ..._computeArcRotation(cmd.params.arc),
-    ..._computeWheelVelocities(cmd.params.arc, cmd.params.velocity, cmd.params.direction),
+    ..._computeArcRotation(cmd.params.arc.value),
+    ..._computeWheelVelocities(cmd.params.arc.value, cmd.params.velocity.value, cmd.params.direction.value),
   };
 
   // Dispatch with a default cubic curve
   _dispatch(new state.StateDriver({
     servos,
-    duration: cmd.params.duration || Infinity,
+    duration: cmd.params.duration.value || Infinity,
   }, 'ease-out'), cmd.callback);
 }
 
@@ -88,10 +115,8 @@ export function driveCmdTrans(cmd) {
 * @param  {Function}    callback  Function to be called when the execution has completed (based on duration)
 */
 function _dispatch(driver, callback) {
-  // log('Dispatching');
-  // log(driver);
   // If a duration is supplied, send to the executor
-  if (driver.duration !== Infinity) {
+  if (driver.duration !== Infinity || driver.cmdDuration !== Infinity) {
     _execute(driver, callback);
     return;
   }
@@ -107,12 +132,13 @@ function _dispatch(driver, callback) {
  */
 function _execute(driver, callback) {
   const origValues = {};
-
-  Object.keys(driver.servos).forEach((servo) => {
-    objectPath.set(origValues, `servos.${servo}.value`, state.setpoints.servos[servo].value);
-    objectPath.set(origValues, `servos.${servo}.timingFunc`, driver.servos[servo].timingFunc);
-    objectPath.set(origValues, `servos.${servo}.velocity`, driver.servos[servo].velocity);
-  });
+  if (driver.duration !== Infinity) {
+    Object.keys(driver.servos).forEach((servo) => {
+      objectPath.set(origValues, `servos.${servo}.value`, state.setpoints.servos[servo].value);
+      objectPath.set(origValues, `servos.${servo}.timingFunc`, driver.servos[servo].timingFunc);
+      objectPath.set(origValues, `servos.${servo}.velocity`, driver.servos[servo].velocity);
+    });
+  }
 
   state.setSignals(driver);
 
@@ -175,10 +201,10 @@ function _computeWheelVelocities(arcFactor, velocity, direction) {
   const arcs = _computeArc(arcFactor);
   const diffFactor = arcs.smallRadius / arcs.largeRadius;
 
-  servos[`driveFront${arcs.smallSide}`].value = velocity * diffFactor * ((direction === 'fwd') ? 1 : -1);
-  servos[`driveFront${arcs.largeSide}`].value = velocity * ((direction === 'fwd') ? 1 : -1);
-  servos[`driveRear${arcs.smallSide}`].value = velocity * diffFactor * ((direction === 'fwd') ? 1 : -1);
-  servos[`driveRear${arcs.largeSide}`].value = velocity * ((direction === 'fwd') ? 1 : -1);
+  servos[`driveFront${arcs.smallSide}`].value = (1 - velocity) * diffFactor * ((direction === 'fwd') ? 1 : -1);
+  servos[`driveFront${arcs.largeSide}`].value = (1 - velocity) * ((direction === 'fwd') ? 1 : -1);
+  servos[`driveRear${arcs.smallSide}`].value = (1 - velocity) * diffFactor * ((direction === 'fwd') ? 1 : -1);
+  servos[`driveRear${arcs.largeSide}`].value = (1 - velocity) * ((direction === 'fwd') ? 1 : -1);
 
   return servos;
 }
@@ -204,4 +230,41 @@ function _computeArc(arcFactor) {
     largeRadius,
     largeAngle,
   };
+}
+
+/**
+ * Return the name of the servo based on the shorthand specified in a command
+ * @param  {String} code   The shorthand "code"
+ * @param  {String} prefix The prefix to give to the resulting name ['drive'|'steer']
+ * @return {String}        The servo name
+ */
+function _resolveServoName(code, prefix) {
+  switch (code) {
+    case 'fl':
+      return `${prefix}FrontLeft`;
+    case 'fr':
+      return `${prefix}FrontRight`;
+    case 'rl':
+      return `${prefix}RearLeft`;
+    case 'rr':
+      return `${prefix}RearRight`;
+    default:
+
+  }
+}
+
+/**
+ * Compute the duration of a command given the velocity parameter
+ * @param {Number}  velocity  The velocity parameter from which to calculate the duration [0, 1]
+ */
+function _computeDuration(velocity) {
+  // Limit the input range to between 0 and 1
+  let _velocity = velocity;
+  if (velocity > 1) {
+    velocity = 1;
+  } else if (velocity < 0) {
+    velocity = 0;
+  }
+
+  return (1 - velocity) * config.hardware.stateLoopMaxDuration;
 }

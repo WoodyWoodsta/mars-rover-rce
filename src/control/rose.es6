@@ -7,7 +7,7 @@ import debug from 'debug';
 
 import * as store from '../store';
 import * as dispatch from './dispatch';
-import * as sequences from './commands';
+import * as commands from './commands';
 
 let currentSequence = [];
 const log = debug('rce:rose');
@@ -17,9 +17,6 @@ const log = debug('rce:rose');
  */
 export function init() {
   store.rceState.on('controller.sequenceState-changed', _seqStateRelay);
-  store.rceState.on('controller.currentSequenceIndex-changed', (event) => {
-    log(`Old: ${event.oldValue}, New: ${event.newValue}`);
-  });
 }
 
 /**
@@ -61,37 +58,43 @@ function _decodeCommands() {
     switch (cmd._name) {
       case 'RoverRotateCmd': {
         // Decode the Rotate Rover command
-        const cmd1 = new sequences.SingleWheelRotateCmd({
+        const cmd1 = new commands.SingleWheelRotateCmd({
           wheel: 'fl',
           angle: 45,
           velocity: 1,
         });
         cmd1._index = index;
-        const cmd2 = new sequences.SingleWheelRotateCmd({
+        const cmd2 = new commands.SingleWheelRotateCmd({
           wheel: 'fr',
           angle: -45,
           velocity: 1,
         });
         cmd2._index = index;
-        const cmd3 = new sequences.SingleWheelRotateCmd({
+        const cmd3 = new commands.SingleWheelRotateCmd({
           wheel: 'rl',
           angle: -45,
           velocity: 1,
         });
         cmd3._index = index;
-        const cmd4 = new sequences.SingleWheelRotateCmd({
+        const cmd4 = new commands.SingleWheelRotateCmd({
           wheel: 'rr',
           angle: 45,
           velocity: 1,
         });
         cmd4._index = index;
 
-        // TODO: Would have to put a pause in here to wait for the wheels to finish turning
+        const cmd5 = new commands.PauseCmd({
+          duration: 1000,
+        });
+        cmd5._index = index;
+
+        // TODO: Add wheel motion
 
         currentSequence.push(cmd1);
         currentSequence.push(cmd2);
         currentSequence.push(cmd3);
         currentSequence.push(cmd4);
+        currentSequence.push(cmd5);
         break;
       }
       default:
@@ -114,8 +117,10 @@ function _popExecCommand(index) {
 
     switch (cmd._name) {
       case 'PauseCmd':
-        dispatch.tempCmdTrans2(cmd);
-
+        dispatch.pauseCmdTrans(cmd);
+        break;
+      case 'SingleWheelRotateCmd':
+        dispatch.singleWheelRotateCmdTrans(cmd);
         break;
       default:
         log(`No such command found of type: ${cmd._name}`);
