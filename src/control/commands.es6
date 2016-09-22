@@ -132,11 +132,11 @@ export class WheelsRotateCmd extends SeqCmd {
     super('Wheels Rotate', 'high');
 
     this.params = {
-      angle: {
+      arc: {
         type: Number,
-        unit: 'deg',
+        unit: null,
         icon: 'rsvp:near-me',
-        value: params.angle || null,
+        value: params.arc || null,
       },
       velocity: {
         type: Number,

@@ -61,25 +61,29 @@ function _decodeCommands() {
         const cmd1 = new commands.SingleWheelRotateCmd({
           wheel: 'fl',
           angle: 45,
-          velocity: 1,
+          velocity: 0,
+          waitForComplete: false,
         });
         cmd1._index = index;
         const cmd2 = new commands.SingleWheelRotateCmd({
           wheel: 'fr',
           angle: -45,
-          velocity: 1,
+          velocity: 0,
+          waitForComplete: false,
         });
         cmd2._index = index;
         const cmd3 = new commands.SingleWheelRotateCmd({
           wheel: 'rl',
           angle: -45,
-          velocity: 1,
+          velocity: 0,
+          waitForComplete: false,
         });
         cmd3._index = index;
         const cmd4 = new commands.SingleWheelRotateCmd({
           wheel: 'rr',
           angle: 45,
-          velocity: 1,
+          velocity: 0,
+          waitForComplete: false,
         });
         cmd4._index = index;
 
@@ -88,7 +92,12 @@ function _decodeCommands() {
         });
         cmd5._index = index;
 
-        // TODO: Add wheel motion
+        const cmd6 = new commands.SingleWheelDriveCmd({
+          duration: cmd.params.duration.value * 1000,
+          velocity: cmd.params.velocity.value,
+          wheel: 'fl',
+          direction: (cmd.params.direction.value === 'cw') ? 'fwd' : 'rev',
+        });
 
         currentSequence.push(cmd1);
         currentSequence.push(cmd2);
@@ -121,6 +130,15 @@ function _popExecCommand(index) {
         break;
       case 'SingleWheelRotateCmd':
         dispatch.singleWheelRotateCmdTrans(cmd);
+        break;
+      case 'SingleWheelDriveCmd':
+        dispatch.singleWheelDriveCmdTrans(cmd);
+        break;
+      case 'DriveCmd':
+        dispatch.driveCmdTrans(cmd);
+        break;
+      case 'WheelsRotateCmd':
+        dispatch.wheelsRotateCmdTrans(cmd);
         break;
       default:
         log(`No such command found of type: ${cmd._name}`);

@@ -41,7 +41,6 @@ export function tempCmdTrans(cmd) {
 
   _dispatch(new state.StateDriver({
     servos,
-    duration: cmd.params.duration.value || Infinity,
   }, 'ease-out'), cmd.callback);
 }
 
@@ -70,7 +69,7 @@ export function tempCmdTrans2(cmd) {
  */
 export function pauseCmdTrans(cmd) {
   // Simply dispatch an empty state driver with a duration
-  _dispatch(new state.StateDriver({ duration: cmd.params.duration.value || 0 }), cmd.callback);
+  _dispatch(new state.StateDriver({ duration: cmd.params.duration.value * 1000 || 0 }), cmd.callback);
 }
 
 /**
@@ -87,7 +86,24 @@ export function singleWheelRotateCmdTrans(cmd) {
 
   _dispatch(new state.StateDriver({
     servos,
-    cmdDuration: (cmd.params.waitForComplete.value) ? _computeDuration(cmd.params.velocity.value / 100) : Infinity,
+    cmdDuration: (cmd.params.waitForComplete.value) ? _velocityToDuration(cmd.params.velocity.value / 100) : Infinity,
+  }), cmd.callback);
+}
+
+/**
+ * Translates the SingleWheelDriveCmd into outputs for dispatch
+ * @param  {SingleWheelDriveCmd} cmd The SingleWheelDriveCmd to be translated
+ */
+export function singleWheelDriveCmdTrans(cmd) {
+  const servos = {};
+
+  servos[_resolveServoName(cmd.params.wheel.value, 'drive')] = {
+    value: (cmd.params.velocity.value / 100) * ((cmd.params.direction.value === 'fwd') ? 1 : -1),
+  };
+
+  _dispatch(new state.StateDriver({
+    servos,
+    duration: cmd.params.duration.value * 1000,
   }), cmd.callback);
 }
 
@@ -101,7 +117,25 @@ export function driveCmdTrans(cmd) {
     ..._computeWheelVelocities(cmd.params.arc.value, cmd.params.velocity.value, cmd.params.direction.value),
   };
 
-  // Dispatch with a default cubic curve
+  _dispatch(new state.StateDriver({
+    servos,
+    duration: cmd.params.duration.value || Infinity,
+  }, 'ease-out'), cmd.callback);
+}
+
+/**
+ * Translates the WheelsRotateCmd into outputs for dispatch
+ * @param  {WheelsRotateCmd} cmd The WheelsRotateCmd to be translated
+ */
+export function wheelsRotateCmdTrans(cmd) {
+  const servos = {
+    ..._computeArcRotation(cmd.params.arc.value),
+  };
+
+  Object.keys(servos).forEach((servoName) => {
+    servos[servoName].velocity = cmd.params.velocity.value / 100;
+  });
+
   _dispatch(new state.StateDriver({
     servos,
     duration: cmd.params.duration.value || Infinity,
@@ -257,7 +291,7 @@ function _resolveServoName(code, prefix) {
  * Compute the duration of a command given the velocity parameter
  * @param {Number}  velocity  The velocity parameter from which to calculate the duration [0, 1]
  */
-function _computeDuration(velocity) {
+function _velocityToDuration(velocity) {
   // Limit the input range to between 0 and 1
   let _velocity = velocity;
   if (velocity > 1) {

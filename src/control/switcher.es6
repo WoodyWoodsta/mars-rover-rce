@@ -8,6 +8,7 @@ import debug from 'debug';
 import * as store from '../store';
 import * as interactive from './interactive';
 import * as rose from './rose';
+import * as leds from '../hardware/leds';
 
 const log = debug('rce:control-switcher');
 
