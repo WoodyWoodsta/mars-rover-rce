@@ -4,7 +4,7 @@
  */
 import debug from 'debug';
 import objectPath from 'object-path';
-import { EventEmitter } from 'events';
+import { EventEmitter } from 'eventemitter3';
 
 import { rceIO } from './server';
 

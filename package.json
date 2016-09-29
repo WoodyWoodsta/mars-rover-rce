@@ -33,6 +33,7 @@
   "dependencies": {
     "debug": "^2",
     "edison-io": "^0.9.4",
+    "eventemitter3": "^2.0.1",
     "johnny-five": "^0.9.62",
     "koa": "^2",
     "koa-bodyparser": "^3",
