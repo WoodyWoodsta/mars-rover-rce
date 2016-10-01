@@ -201,7 +201,7 @@ export const hardwareState = new DataStore('hardwareState', 'source', {
   camera: ['rceIO'],
   leds: ['rceIO'],
   proximity: ['rceIO'],
-  'servos.initialised': ['rceIO'],
+  servos: ['rceIO'],
 });
 
 /**

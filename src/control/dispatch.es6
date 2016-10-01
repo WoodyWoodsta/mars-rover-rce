@@ -157,6 +157,11 @@ function _dispatch(driver, callback) {
 
   // Send the drivering signals to the loop
   state.setSignals(driver);
+
+  // Fire the callback if provided
+  if (callback) {
+    callback();
+  }
 }
 
 /**
