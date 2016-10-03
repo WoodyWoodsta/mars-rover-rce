@@ -6,7 +6,11 @@ import * as rceIOTranslator from './rce-io-translator';
 
 const log = debug('rce:socket');
 
+let rceIO;
+
 export default function init(socket) {
+  rceIO = socket;
+
   socket.on('connection', () => {
     store.rceState.set('rceIO.connected', true);
   });
@@ -16,6 +20,10 @@ export default function init(socket) {
   });
 
   socket.on('data', rceIOTranslator.onData);
-
   socket.on('post', rceIOTranslator.onPost);
+  socket.on('request', rceIOTranslator.onRequest);
+}
+
+export function sendRequest(type, payload) {
+  rceIO.broadcast('request', { type, payload });
 }

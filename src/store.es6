@@ -19,16 +19,21 @@ const log = debug('rce:store');
  * @param {Object}  watched An array of socket channel names or callback functions for specific data paths
  */
 class DataStore extends EventEmitter {
-  constructor(name, type = 'sink', fields = {}, watched = {}) {
+  constructor(name, type = 'sink', pushOnCreate, fields = {}, watched = {}) {
     super();
 
     // Copy in fields
     Object.assign(this, fields);
-    this.name = name;
+    this._name = name;
     this._type = type;
     this._watched = watched;
 
     this._createAutoListeners();
+
+    // Perform initial sync
+    if (pushOnCreate) {
+      this.repush();
+    }
   }
 
   /**
@@ -46,8 +51,21 @@ class DataStore extends EventEmitter {
     this.receiveData(fullPath, fullPath, data, notifyees);
   }
 
-  sync(fullPath, notifyees = []) {
-    this.receiveData(fullPath, fullPath, objectPath.get(this, fullPath), notifyees);
+  /**
+   * Re-notify the notifyees of the data currently at the path specified
+   * @type {Array}
+   */
+  repush(fullPath, notifyees = []) {
+    if (!fullPath || fullPath === '*') {
+      // Push the entire store
+      Object.keys(this).forEach((key) => {
+        if (key.charAt(0) !== '_') {
+          this.set(key, objectPath.get(this, key), notifyees);
+        }
+      });
+    } else {
+      this.set(fullPath, objectPath.get(this, fullPath), notifyees);
+    }
   }
 
   receiveData(fullPath, path, data, notifyees = []) {
@@ -73,12 +91,7 @@ class DataStore extends EventEmitter {
     // Emit notifications
     while (dotIndex > -1) {
       const sub = fullPath.slice(0, dotIndex || undefined);
-      this.emit(`${sub}-changed`, {
-        fullPath,
-        path: sub,
-        newValue: objectPath.get(newValue, sub),
-        oldValue: objectPath.get(oldValue, sub),
-      });
+      this._emitChange(fullPath, sub, objectPath.get(newValue, sub), objectPath.get(oldValue, sub));
 
       if (this._watched[sub]) {
         notified.push(sub);
@@ -87,9 +100,32 @@ class DataStore extends EventEmitter {
       dotIndex = fullPath.indexOf('.', dotIndex + 1);
     }
 
+    this._climbDownPath(fullPath, path, objectPath.get(newValue, path), objectPath.get(oldValue, path));
+
     // Custom notify based on passed in `notifyees`. Will not duplicate
     if (notifyees) {
-      customNotify(notified, this.name, fullPath, path, newValue, oldValue, notifyees);
+      customNotify(notified, this._name, fullPath, path, newValue, oldValue, notifyees);
+    }
+  }
+
+  _emitChange(fullPath, path, newValue, oldValue) {
+    this.emit(`${path}-changed`, {
+      fullPath,
+      path,
+      newValue,
+      oldValue,
+    });
+  }
+
+  _climbDownPath(fullPath, path, newValue, oldValue) {
+    if (newValue) {
+      Object.keys(newValue).forEach((key) => {
+        if (Object.prototype.toString.call(newValue) === '[object Object]') {
+          this._climbDownPath(fullPath, `${path}.${key}`, newValue[key], (oldValue) ? (oldValue[key]) : undefined);
+        }
+
+        this._emitChange(fullPath, `${path}.${key}`, newValue[key], (oldValue) ? (oldValue[key]) : undefined);
+      });
     }
   }
 
@@ -99,7 +135,7 @@ class DataStore extends EventEmitter {
         // Only listen if there are watchers in the array
         this.on(`${watchKey}-changed`, function onChanged(message) {
           setTimeout(() => {
-            customNotify([], this.name, message.fullPath, message.path, message.newValue, message.oldValue, this._watched[watchKey]);
+            customNotify([], this._name, message.fullPath, message.path, message.newValue, message.oldValue, this._watched[watchKey]);
           }, 0);
         });
       }
@@ -115,7 +151,7 @@ class DataStore extends EventEmitter {
  * @member {Number} camMemory   The percentage of physically available memory taken up by the cam process
  * @member {Object} controller  The state of the rover function controller
  */
-export const rceState = new DataStore('rceState', 'source', {
+export const rceState = new DataStore('rceState', 'source', true, {
   rceIO: {
     connected: false,
   },
@@ -147,7 +183,7 @@ export const rceState = new DataStore('rceState', 'source', {
  * @member {Object} proximity Data related to the proximity sensors
  * @member {Object} servos    Data related to the servo motors
  */
-export const hardwareState = new DataStore('hardwareState', 'source', {
+export const hardwareState = new DataStore('hardwareState', 'source', true, {
   board: {
     initialised: false,
   },
@@ -170,11 +206,6 @@ export const hardwareState = new DataStore('hardwareState', 'source', {
       head: 0,
     },
     warn: {
-      front: false,
-      rear: false,
-      head: false,
-    },
-    shutdown: {
       front: false,
       rear: false,
       head: false,
@@ -210,7 +241,7 @@ export const hardwareState = new DataStore('hardwareState', 'source', {
  * @member {Object} driveInput  The input values from the drive joystick
  * @member {Object} testLED     The state of the test LED
  */
-export const control = new DataStore('control', 'sink', {
+export const control = new DataStore('control', 'sink', false, {
   type: '',
 
   driveInput: {

@@ -70,6 +70,12 @@ export const config = {
       },
     },
 
+    proximityMax: {
+      frontSensor: 5000,
+      rearSensor: 5000,
+      headSensor: 5000,
+    },
+
     cameraMaxRetry: 3,
     cameraStartCmdLine: '/usr/local/bin/mjpg_streamer -i "/usr/local/lib/input_uvc.so -d /dev/video0 -n -r 640x480 -f 30" -o "/usr/local/lib//output_http.so -n -p 8080 -w /usr/local/www"',
   },

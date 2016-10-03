@@ -30,6 +30,7 @@ import * as system from '../system';
 import * as store from '../store';
 import * as stateLoop from '../control/state';
 import * as switcher from '../control/switcher';
+import * as rceIOTranslator from '../servers/rce-io-translator';
 
 const log = debug('rce:startup-sequence');
 
@@ -74,6 +75,12 @@ function onBoardReady() {
     // proximity.init();
     // proximity.start();
   }
+
+  store.hardwareState.repush();
+  store.rceState.repush();
+
+  rceIOTranslator.requestRepush('control', '*');
+  rceIOTranslator.requestRepush('control', '*');
 
   system.startProcessMonitoring();
 

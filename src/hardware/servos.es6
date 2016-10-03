@@ -166,7 +166,7 @@ export function setServo(servo, value) {
 function _customEmitServos() {
   Object.keys(hw).forEach((servo) => {
     if (objectPath.get(_customEmitServos, servo) !== store.hardwareState.servos.values[servo]) {
-      store.hardwareState.sync(`servos.values.${servo}`);
+      store.hardwareState.repush(`servos.values.${servo}`);
       _customEmitServos[servo] = store.hardwareState.servos.values[servo];
     }
   });

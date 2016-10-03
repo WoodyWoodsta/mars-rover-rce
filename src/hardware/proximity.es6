@@ -56,39 +56,21 @@ function _onFrontSensorData() {
   const mm = this.cm * 10;
   store.hardwareState.set('proximity.values.front', mm);
 
-  const check = checkObstacle('frontSensor', mm);
-
-  if (check === 'warn') {
-    this.hardwareState.set('proximity.warn.front', true);
-  } else if (check === 'shutdown') {
-    this.hardwareState.set('proximity.shutdown.front', true);
-  }
+  this.hardwareState.set('proximity.warn.front', checkObstacle('frontSensor', mm));
 }
 
 function _onRearSensorData() {
   const mm = this.cm * 10;
   store.hardwareState.set('proximity.values.rear', mm);
 
-  const check = checkObstacle('rearSensor', mm);
-
-  if (check === 'warn') {
-    this.hardwareState.set('proximity.warn.rear', true);
-  } else if (check === 'shutdown') {
-    this.hardwareState.set('proximity.shutdown.rear', true);
-  }
+  this.hardwareState.set('proximity.warn.rear', checkObstacle('rearSensor', mm));
 }
 
 function _onHeadSensorData() {
   const mm = this.cm * 10;
   store.hardwareState.set('proximity.values.head', mm);
 
-  const check = checkObstacle('headSensor', mm);
-
-  if (check === 'warn') {
-    this.hardwareState.set('proximity.warn.head', true);
-  } else if (check === 'shutdown') {
-    this.hardwareState.set('proximity.shutdown.head', true);
-  }
+  this.hardwareState.set('proximity.warn.head', checkObstacle('headSensor', mm));
 }
 
 function checkObstacle(sensor, dist) {

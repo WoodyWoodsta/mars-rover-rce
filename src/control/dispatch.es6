@@ -300,10 +300,10 @@ function _velocityToDuration(velocity) {
   // Limit the input range to between 0 and 1
   let _velocity = velocity;
   if (velocity > 1) {
-    velocity = 1;
+    _velocity = 1;
   } else if (velocity < 0) {
-    velocity = 0;
+    _velocity = 0;
   }
 
-  return (1 - velocity) * config.hardware.stateLoopMaxDuration;
+  return (1 - _velocity) * config.hardware.stateLoopMaxDuration;
 }
