@@ -29,10 +29,17 @@ export function init(callback) {
   store.hardwareState.set('camera.running', true);
 }
 
-export function stop() {
-  killAll(camProcess.pid, 'SIGINT');
-  log('Camera stopped');
-  store.hardwareState.set('camera.running', false);
+export function stop(exit, callback) {
+  if (!exit) {
+    store.hardwareState.set('camera.running', false);
+  }
+
+  if (camProcess) {
+    killAll(camProcess.pid, 'SIGINT', callback);
+    log('Camera stopped');
+  } else {
+    callback();
+  }
 }
 
 // === Private ===
@@ -51,13 +58,9 @@ function start() {
     }
   });
 
+  camProcess.on('exit', (code, sig) => {
+    log(`Camera exited with code: ${code} (${sig})`);
+  });
+
   camProcessPid = camProcess.pid;
-
-  process.on('beforeExit', () => {
-    stop();
-  });
-
-  process.on('exit', () => {
-    console.log('I am exiting');
-  });
 }

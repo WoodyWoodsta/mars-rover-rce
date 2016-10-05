@@ -8,6 +8,8 @@ import psTree from 'ps-tree';
 export function killAll(pid, signal = 'SIGKILL', callback = () => {}) {
   const killTree = true;
 
+  if (pid === null) return;
+
   if (killTree) {
     psTree(pid, (err, children) => {
       [pid].concat(

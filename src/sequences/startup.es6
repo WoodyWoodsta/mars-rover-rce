@@ -35,8 +35,13 @@ import * as rceIOTranslator from '../servers/rce-io-translator';
 const log = debug('rce:startup-sequence');
 
 export default function seq() {
+  // Initialise the system
+  system.init();
+
+  // Initialise the server
   server();
 
+  // Wait for the socket to connect
   store.rceState.on('rceIO.connected-changed', (event) => {
     if (event.newValue) {
       if (!store.hardwareState.board.initialised) {
@@ -66,9 +71,9 @@ function onBoardReady() {
   }
 
   // Initialise the camera
-  // if (!store.hardwareState.camera.initialised) {
-  //   camera.init();
-  // }
+  if (!store.hardwareState.camera.initialised) {
+    camera.init();
+  }
 
   // Initialise the ultrasonic sensors
   if (!store.hardwareState.proximity.initialised) {
