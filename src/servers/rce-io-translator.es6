@@ -37,8 +37,8 @@ export function onPost(event) {
 
 export function onRequest(event) {
   switch (event.data.type) {
-    // REVIEW: This should never be done, the rsvp server should *always* handle repush requests as it will be more capable of
-    // doing so for large numbers of clients
+    // REVIEW: This should never be done if the request came from a Client, the rsvp server should *always* handle repush requests
+    // as it will be more capable of doing so for large numbers of clients
     case 'repush':
       if (store[event.data.payload.storeName]) {
         store[event.data.payload.storeName].repush(event.data.payload.path, event.data.payload.notifyees);

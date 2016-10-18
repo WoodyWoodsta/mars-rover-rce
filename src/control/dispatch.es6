@@ -22,7 +22,6 @@ import objectPath from 'object-path';
 
 import { config } from '../config';
 import * as state from './state';
-import * as store from '../store';
 
 const log = debug('rce:cmd-dispatch');
 
@@ -103,12 +102,13 @@ export function singleWheelDriveCmdTrans(cmd) {
 
   _dispatch(new state.StateDriver({
     servos,
-    duration: cmd.params.duration.value * 1000,
+    duration: cmd.params.duration.value * 1000 || Infinity,
   }), cmd.callback);
 }
 
 /**
  * Translates the DriveCmd into outputs for dispatch
+ * NOTE: The velocity here is not to be confused with the motion timing based velocity
  * @param  {DriveCmd} cmd The DriveCmd to be translated
  */
 export function driveCmdTrans(cmd) {
@@ -119,7 +119,7 @@ export function driveCmdTrans(cmd) {
 
   _dispatch(new state.StateDriver({
     servos,
-    duration: cmd.params.duration.value || Infinity,
+    duration: cmd.params.duration.value * 1000 || Infinity,
   }, 'ease-out'), cmd.callback);
 }
 
@@ -128,6 +128,7 @@ export function driveCmdTrans(cmd) {
  * @param  {WheelsRotateCmd} cmd The WheelsRotateCmd to be translated
  */
 export function wheelsRotateCmdTrans(cmd) {
+  debugger;
   const servos = {
     ..._computeArcRotation(cmd.params.arc.value),
   };
@@ -138,7 +139,9 @@ export function wheelsRotateCmdTrans(cmd) {
 
   _dispatch(new state.StateDriver({
     servos,
-    duration: cmd.params.duration.value || Infinity,
+    cmdDuration: _velocityToDuration(cmd.params.velocity.value / 100),
+    // TODO: Add in the wait for complete checkbox
+    // cmdDuration: (cmd.params.waitForComplete.value) ? _velocityToDuration(cmd.params.velocity.value / 100) : Infinity,
   }, 'ease-out'), cmd.callback);
 }
 
@@ -189,7 +192,7 @@ function _execute(driver, callback) {
   }
 
   // Cmd duration timing
-  if (state.cmdDuration !== Infinity) {
+  if (driver.cmdDuration !== Infinity) {
     setTimeout(() => {
       if (callback) {
         callback();
@@ -212,12 +215,14 @@ function _computeArcRotation(arcFactor) {
     steerRearRight: { value: 0 },
   };
 
-  const arcs = _computeArc(arcFactor);
+  if (arcFactor !== 0) {
+    const arcs = _computeArc(arcFactor);
 
-  servos[`steerFront${arcs.smallSide}`].value = arcs.smallAngle;
-  servos[`steerFront${arcs.largeSide}`].value = arcs.largeAngle;
-  servos[`steerRear${arcs.smallSide}`].value = -1 * arcs.smallAngle;
-  servos[`steerRear${arcs.largeSide}`].value = -1 * arcs.largeAngle;
+    servos[`steerFront${arcs.smallSide}`].value = arcs.smallAngle;
+    servos[`steerFront${arcs.largeSide}`].value = arcs.largeAngle;
+    servos[`steerRear${arcs.smallSide}`].value = -1 * arcs.smallAngle;
+    servos[`steerRear${arcs.largeSide}`].value = -1 * arcs.largeAngle;
+  }
 
   return servos;
 }
@@ -238,12 +243,14 @@ function _computeWheelVelocities(arcFactor, velocity, direction) {
   };
 
   const arcs = _computeArc(arcFactor);
-  const diffFactor = arcs.smallRadius / arcs.largeRadius;
+  const diffFactor = Math.abs(arcs.smallRadius / arcs.largeRadius);
 
-  servos[`driveFront${arcs.smallSide}`].value = (1 - velocity) * diffFactor * ((direction === 'fwd') ? 1 : -1);
-  servos[`driveFront${arcs.largeSide}`].value = (1 - velocity) * ((direction === 'fwd') ? 1 : -1);
-  servos[`driveRear${arcs.smallSide}`].value = (1 - velocity) * diffFactor * ((direction === 'fwd') ? 1 : -1);
-  servos[`driveRear${arcs.largeSide}`].value = (1 - velocity) * ((direction === 'fwd') ? 1 : -1);
+  log(diffFactor);
+
+  servos[`driveFront${arcs.smallSide}`].value = ((1 - velocity) * diffFactor * ((direction === 'fwd') ? 1 : -1)) / 100;
+  servos[`driveFront${arcs.largeSide}`].value = ((1 - velocity) * ((direction === 'fwd') ? 1 : -1)) / 100;
+  servos[`driveRear${arcs.smallSide}`].value = ((1 - velocity) * diffFactor * ((direction === 'fwd') ? 1 : -1)) / 100;
+  servos[`driveRear${arcs.largeSide}`].value = ((1 - velocity) * ((direction === 'fwd') ? 1 : -1)) / 100;
 
   return servos;
 }
@@ -257,9 +264,17 @@ function _computeArc(arcFactor) {
   const largeSide = (arcFactor < 0) ? 'Right' : 'Left';
   const smallSide = (largeSide === 'Right') ? 'Left' : 'Right';
   const smallAngle = arcFactor * 45;
-  const smallRadius = config.hardware.wheelPitch / Math.tan(Math.abs(smallAngle));
+  // TODO: Sort out rad to deg conversions
+  const smallRadius = config.hardware.wheelPitch / Math.cos((Math.abs(smallAngle) * (2 * Math.PI)) / 360);
   const largeRadius = config.hardware.wheelSpan + smallRadius;
-  const largeAngle = Math.atan(config.hardware.wheelPitch / largeRadius);
+  const largeAngle = (Math.asin(config.hardware.wheelPitch / largeRadius) * 360) / (2 * Math.PI);
+
+  log(`largeSide: ${largeSide}`);
+  log(`smallSide: ${smallSide}`);
+  log(`smallAngle: ${smallAngle}`);
+  log(`smallRadius: ${smallRadius}`);
+  log(`largeRadius: ${largeRadius}`);
+  log(`largeAngle: ${largeAngle}`);
 
   return {
     largeSide,
