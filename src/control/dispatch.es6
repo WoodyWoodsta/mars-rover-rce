@@ -264,7 +264,6 @@ function _computeArc(arcFactor) {
   const largeSide = (arcFactor < 0) ? 'Right' : 'Left';
   const smallSide = (largeSide === 'Right') ? 'Left' : 'Right';
   const smallAngle = arcFactor * 45;
-  // TODO: Sort out rad to deg conversions
   const smallRadius = config.hardware.wheelPitch / Math.cos((Math.abs(smallAngle) * (2 * Math.PI)) / 360);
   const largeRadius = config.hardware.wheelSpan + smallRadius;
   const largeAngle = (Math.asin(config.hardware.wheelPitch / largeRadius) * 360) / (2 * Math.PI);
