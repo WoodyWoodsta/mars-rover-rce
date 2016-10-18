@@ -15,7 +15,7 @@ export class PauseCmd extends SeqCmd {
 
     this.params = {
       duration: {
-        type: Number,
+        type: 'Number',
         unit: 'sec',
         icon: 'rsvp:access-time',
         value: params.duration || null,
@@ -30,29 +30,29 @@ export class SingleWheelRotateCmd extends SeqCmd {
 
     this.params = {
       wheel: {
-        type: String,
+        type: 'String',
         values: ['fl', 'fr', 'rl', 'rr'],
         unit: null,
         icon: 'rsvp:wheel',
         value: params.wheel || null,
       },
       angle: {
-        type: Number,
+        type: 'Number',
         unit: 'deg',
         icon: 'rsvp:angle',
-        value: params.angle || null,
+        value: (params.angle !== undefined) ? params.angle : null,
       },
       velocity: {
-        type: Number,
+        type: 'Number',
         unit: '%',
         icon: 'rsvp:velocity',
-        value: params.velocity || null,
+        value: (params.velocity !== undefined) ? params.velocity : null,
       },
       waitForComplete: {
-        type: Boolean,
+        type: 'Boolean',
         unit: null,
         icon: 'rsvp:wait-for-complete',
-        value: params.waitForComplete || true,
+        value: (params.waitForComplete !== undefined) ? params.waitForComplete : true,
       },
     };
   }
@@ -64,26 +64,26 @@ export class SingleWheelDriveCmd extends SeqCmd {
 
     this.params = {
       duration: {
-        type: Number,
+        type: 'Number',
         unit: 'sec',
         icon: 'rsvp:access-time',
         value: params.duration || null,
       },
       wheel: {
-        type: String,
+        type: 'String',
         values: ['fl', 'fr', 'rl', 'rr'],
         unit: null,
         icon: 'rsvp:wheel',
         value: params.wheel || null,
       },
       velocity: {
-        type: Number,
+        type: 'Number',
         unit: '%',
         icon: 'rsvp:velocity',
-        value: params.velocity || null,
+        value: (params.velocity !== undefined) ? params.velocity : null,
       },
       direction: {
-        type: String,
+        type: 'String',
         values: ['fwd', 'rev'],
         unit: null,
         icon: 'rsvp:near-me',
@@ -99,28 +99,28 @@ export class DriveCmd extends SeqCmd {
 
     this.params = {
       duration: {
-        type: Number,
+        type: 'Number',
         unit: 'sec',
         icon: 'rsvp:access-time',
         value: params.duration || null,
       },
       velocity: {
-        type: Number,
+        type: 'Number',
         unit: '%',
         icon: 'rsvp:velocity',
-        value: params.velocity || null,
+        value: (params.velocity !== undefined) ? params.velocity : null,
       },
       direction: {
-        type: String,
+        type: 'String',
         values: ['fwd', 'rev'],
         unit: null,
         icon: 'rsvp:near-me',
         value: params.direction || null,
       },
       arc: {
-        type: Number,
+        type: 'Number',
         unit: null,
-        icon: 'rsvp:',
+        icon: 'rsvp:angle',
         value: params.arc || null,
       },
     };
@@ -133,16 +133,16 @@ export class WheelsRotateCmd extends SeqCmd {
 
     this.params = {
       arc: {
-        type: Number,
+        type: 'Number',
         unit: null,
-        icon: 'rsvp:near-me',
+        icon: 'rsvp:angle',
         value: params.arc || null,
       },
       velocity: {
-        type: Number,
+        type: 'Number',
         unit: '%',
         icon: 'rsvp:velocity',
-        value: params.velocity || null,
+        value: (params.velocity !== undefined) ? params.velocity : null,
       },
     };
   }
@@ -154,19 +154,19 @@ export class RoverRotateCmd extends SeqCmd {
 
     this.params = {
       duration: {
-        type: Number,
+        type: 'Number',
         unit: 'sec',
         icon: 'rsvp:access-time',
         value: params.duration || null,
       },
       velocity: {
-        type: Number,
+        type: 'Number',
         unit: '%',
         icon: 'rsvp:velocity',
-        value: params.velocity || null,
+        value: (params.velocity !== undefined) ? params.velocity : null,
       },
       direction: {
-        type: String,
+        type: 'String',
         values: ['cw', 'ccw'],
         unit: null,
         icon: 'rsvp:near-me',

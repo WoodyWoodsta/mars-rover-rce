@@ -102,7 +102,7 @@ export function singleWheelDriveCmdTrans(cmd) {
 
   _dispatch(new state.StateDriver({
     servos,
-    duration: cmd.params.duration.value * 1000 || Infinity,
+    duration: (cmd.params.duration && (cmd.params.duration.value * 1000)) || Infinity,
   }), cmd.callback);
 }
 
@@ -119,7 +119,7 @@ export function driveCmdTrans(cmd) {
 
   _dispatch(new state.StateDriver({
     servos,
-    duration: cmd.params.duration.value * 1000 || Infinity,
+    duration: (cmd.params.duration && (cmd.params.duration.value * 1000)) || Infinity,
   }, 'ease-out'), cmd.callback);
 }
 
@@ -128,7 +128,6 @@ export function driveCmdTrans(cmd) {
  * @param  {WheelsRotateCmd} cmd The WheelsRotateCmd to be translated
  */
 export function wheelsRotateCmdTrans(cmd) {
-  debugger;
   const servos = {
     ..._computeArcRotation(cmd.params.arc.value),
   };
@@ -262,9 +261,9 @@ function _computeArc(arcFactor) {
   const largeSide = (arcFactor < 0) ? 'Right' : 'Left';
   const smallSide = (largeSide === 'Right') ? 'Left' : 'Right';
   const smallAngle = arcFactor * 45;
-  const smallRadius = config.hardware.wheelPitch / Math.cos((Math.abs(smallAngle) * (2 * Math.PI)) / 360);
+  const smallRadius = config.hardware.wheelPitch / Math.sin(deg2rad(Math.abs(smallAngle)));
   const largeRadius = config.hardware.wheelSpan + smallRadius;
-  const largeAngle = (arcFactor < 0 ? -1 : 1) * ((Math.asin(config.hardware.wheelPitch / largeRadius) * 360) / (2 * Math.PI));
+  const largeAngle = (arcFactor < 0 ? -1 : 1) * rad2deg(Math.asin(config.hardware.wheelPitch / largeRadius));
 
   return {
     largeSide,
@@ -311,4 +310,12 @@ function _velocityToDuration(velocity) {
   }
 
   return (1 - _velocity) * config.hardware.stateLoopMaxDuration;
+}
+
+function rad2deg(rad) {
+  return (rad / (2 * Math.PI)) * 360;
+}
+
+function deg2rad(deg) {
+  return (deg * (2 * Math.PI)) / 360;
 }
