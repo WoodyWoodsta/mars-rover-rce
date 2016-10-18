@@ -245,8 +245,6 @@ function _computeWheelVelocities(arcFactor, velocity, direction) {
   const arcs = _computeArc(arcFactor);
   const diffFactor = Math.abs(arcs.smallRadius / arcs.largeRadius);
 
-  log(diffFactor);
-
   servos[`driveFront${arcs.smallSide}`].value = ((1 - velocity) * diffFactor * ((direction === 'fwd') ? 1 : -1)) / 100;
   servos[`driveFront${arcs.largeSide}`].value = ((1 - velocity) * ((direction === 'fwd') ? 1 : -1)) / 100;
   servos[`driveRear${arcs.smallSide}`].value = ((1 - velocity) * diffFactor * ((direction === 'fwd') ? 1 : -1)) / 100;
@@ -266,14 +264,7 @@ function _computeArc(arcFactor) {
   const smallAngle = arcFactor * 45;
   const smallRadius = config.hardware.wheelPitch / Math.cos((Math.abs(smallAngle) * (2 * Math.PI)) / 360);
   const largeRadius = config.hardware.wheelSpan + smallRadius;
-  const largeAngle = (Math.asin(config.hardware.wheelPitch / largeRadius) * 360) / (2 * Math.PI);
-
-  log(`largeSide: ${largeSide}`);
-  log(`smallSide: ${smallSide}`);
-  log(`smallAngle: ${smallAngle}`);
-  log(`smallRadius: ${smallRadius}`);
-  log(`largeRadius: ${largeRadius}`);
-  log(`largeAngle: ${largeAngle}`);
+  const largeAngle = (arcFactor < 0 ? -1 : 1) * ((Math.asin(config.hardware.wheelPitch / largeRadius) * 360) / (2 * Math.PI));
 
   return {
     largeSide,
