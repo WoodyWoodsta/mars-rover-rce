@@ -10,6 +10,7 @@ import * as dispatch from './dispatch';
  */
 export function init() {
   store.control.on('driveInput-changed', _driveInputRelay);
+  store.control.on('headInput-changed', _headInputRelay);
 }
 
 /**
@@ -17,6 +18,7 @@ export function init() {
  */
 export function deinit() {
   store.control.removeListener('driveInput-changed', _driveInputRelay);
+  store.control.removeListener('headInput-changed', _headInputRelay);
 }
 
 // Interactive Relays
@@ -37,6 +39,34 @@ function _driveInputRelay(event) {
       },
       direction: {
         value: direction,
+      },
+    },
+  });
+}
+
+/**
+ * Relay control inputs from the head joystick input
+ * @param  {Object} event The incomming property change event
+ */
+function _headInputRelay(event) {
+  dispatch.headPanCmdTrans({
+    params: {
+      angle: {
+        value: event.newValue.xMag * 90,
+      },
+      velocity: {
+        value: 0,
+      },
+    },
+  });
+
+  dispatch.headPitchCmdTrans({
+    params: {
+      angle: {
+        value: event.newValue.yMag * 90,
+      },
+      velocity: {
+        value: 0,
       },
     },
   });

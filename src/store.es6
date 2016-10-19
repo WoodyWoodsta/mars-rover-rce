@@ -239,12 +239,18 @@ export const hardwareState = new DataStore('hardwareState', 'source', true, {
  * Store for the control input
  * @member {String} type        The control mode that the client is in ['interactive', 'rose']
  * @member {Object} driveInput  The input values from the drive joystick
+ * @member {Object} headInput   The input values from the head joystick
  * @member {Object} testLED     The state of the test LED
  */
 export const control = new DataStore('control', 'sink', false, {
   type: '',
 
   driveInput: {
+    xMag: 0,
+    yMag: 0,
+  },
+
+  headInput: {
     xMag: 0,
     yMag: 0,
   },

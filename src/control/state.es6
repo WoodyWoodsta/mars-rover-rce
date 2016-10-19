@@ -173,10 +173,6 @@ function _evalChange(component, pathToState) {
   if (driver.value !== state) {
     driver._age += config.hardware.stateLoopInterval;
     _effectServoChange(component);
-
-    log('Values');
-    log(setpoints.servos.headPan.value);
-    log(setpoints.servos.headPan.start);
   }
 }
 
