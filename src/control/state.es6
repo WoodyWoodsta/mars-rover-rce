@@ -76,14 +76,14 @@ export const setpoints = {
       value: 0,
       start: 0,
       velocity: 0,
-      timingFunc: 'ease-in-out',
+      timingFunc: 'ease-out',
       _age: 0,
     },
     headPitch: {
       value: 0,
       start: 0,
       velocity: 0,
-      timingFunc: 'ease-in-out',
+      timingFunc: 'ease-out',
       _age: 0,
     },
   },
@@ -173,6 +173,10 @@ function _evalChange(component, pathToState) {
   if (driver.value !== state) {
     driver._age += config.hardware.stateLoopInterval;
     _effectServoChange(component);
+
+    log('Values');
+    log(setpoints.servos.headPan.value);
+    log(setpoints.servos.headPan.start);
   }
 }
 

@@ -205,6 +205,25 @@ function _decodeCommands() {
         currentSequence.push(cmd18);
         break;
       }
+      case 'HeadPositionCmd': {
+        const cmd1 = new commands.HeadPanCmd({
+          angle: cmd.params.panAngle.value,
+          velocity: cmd.params.velocity.value,
+          waitForComplete: false,
+        });
+        cmd1._index = index;
+
+        const cmd2 = new commands.HeadPitchCmd({
+          angle: cmd.params.pitchAngle.value,
+          velocity: cmd.params.velocity.value,
+          waitForComplete: cmd.params.waitForComplete.value,
+        });
+        cmd._index = index;
+
+        currentSequence.push(cmd1);
+        currentSequence.push(cmd2);
+        break;
+      }
       default:
         cmd._seqIndex = index;
         currentSequence.push(cmd);
@@ -239,8 +258,21 @@ function _popExecCommand(index) {
       case 'WheelsRotateCmd':
         dispatch.wheelsRotateCmdTrans(cmd);
         break;
+      case 'HeadPanCmd':
+        dispatch.headPanCmdTrans(cmd);
+        break;
+      case 'HeadPitchCmd':
+        dispatch.headPitchCmdTrans(cmd);
+        break;
       default:
         log(`No such command found of type: ${cmd._name}`);
+
+        // Exit
+        store.rceState.set('controller.sequenceState', 'off');
+        store.rceState.set('controller.currentSequenceIndex', null);
+
+        // TODO: Send back a command failure message?
+
     }
   } else {
     store.rceState.set('controller.sequenceState', 'off');

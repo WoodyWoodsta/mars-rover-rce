@@ -144,6 +144,42 @@ export function wheelsRotateCmdTrans(cmd) {
   }, 'ease-out'), cmd.callback);
 }
 
+/**
+ * Translates the HeadPanCmd into outputs for dispatch
+ * @param  {HeadPanCmd} cmd The HeadPanCmd to be translated
+ */
+export function headPanCmdTrans(cmd) {
+  const servos = {};
+
+  servos.headPan = {
+    value: cmd.params.angle.value,
+    velocity: cmd.params.velocity.value / 100,
+  };
+
+  _dispatch(new state.StateDriver({
+    servos,
+    cmdDuration: (cmd.params.waitForComplete.value) ? _velocityToDuration(cmd.params.velocity.value / 100) : Infinity,
+  }), cmd.callback);
+}
+
+/**
+ * Translates the HeadPitchCmd into outputs for dispatch
+ * @param  {HeadPitchCmd} cmd The HeadPitchCmd to be translated
+ */
+export function headPitchCmdTrans(cmd) {
+  const servos = {};
+
+  servos.headPitch = {
+    value: cmd.params.angle.value,
+    velocity: cmd.params.velocity.value / 100,
+  };
+
+  _dispatch(new state.StateDriver({
+    servos,
+    cmdDuration: (cmd.params.waitForComplete.value) ? _velocityToDuration(cmd.params.velocity.value / 100) : Infinity,
+  }), cmd.callback);
+}
+
 // === Private ===
 /**
 * Send the hardware signals to the output loop, manage execution time, if required
@@ -242,7 +278,14 @@ function _computeWheelVelocities(arcFactor, velocity, direction) {
   };
 
   const arcs = _computeArc(arcFactor);
-  const diffFactor = Math.abs(arcs.smallRadius / arcs.largeRadius);
+
+  // Default value
+  let diffFactor = 1;
+
+  // Prevent diffFactor from being undefined
+  if (arcs.smallRadius !== Infinity && arcs.largeRadius !== Infinity) {
+    diffFactor = Math.abs(arcs.smallRadius / arcs.largeRadius);
+  }
 
   servos[`driveFront${arcs.smallSide}`].value = ((1 - velocity) * diffFactor * ((direction === 'fwd') ? 1 : -1)) / 100;
   servos[`driveFront${arcs.largeSide}`].value = ((1 - velocity) * ((direction === 'fwd') ? 1 : -1)) / 100;

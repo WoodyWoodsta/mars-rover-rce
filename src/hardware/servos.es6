@@ -147,10 +147,10 @@ export function setServo(servo, value) {
       signal = value + 90;
       break;
     case 'headPan':
-      signal = (value * 70) + 90;
+      signal = value + 90;
       break;
     case 'headPitch':
-      signal = (value * 70) + 90;
+      signal = value + 90;
       break;
     default:
 
