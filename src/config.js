@@ -45,26 +45,34 @@ export const config = {
       driveRearRight: [90, 90],
     },
 
-    proximityController: 'HCSR04',
     // How frequently to update measurements
-    proximityFreq: 25,
+    proximityReadPeriod: 100,
+    proximityTriggerPeriod: 33,
+    proximityTriggerLength: 1,
+    proximityChangeThreshold: 1,
 
-    proximityPins: {
-      frontSensor: 'A0',
-      rearSensor: 'A1',
-      headSensor: 'A2',
+    proximityVoltagePins: {
+      front: 'A0',
+      rear: 'A1',
+      head: 'A2',
+    },
+
+    proximityTriggerPins: {
+      front: 3,
+      rear: 4,
+      head: 5,
     },
 
     // Threshold at which to warn of obstacle
     proximityThreshholds: {
       warn: {
-        frontSensor: 200,
+        frontSensor: 50,
         rearSensor: 200,
         headSensor: 100,
       },
 
       shutdown: {
-        frontSensor: 30,
+        frontSensor: 20,
         rearSensor: 30,
         headSensor: 30,
       },

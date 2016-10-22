@@ -159,7 +159,7 @@ export function headPanCmdTrans(cmd) {
   _dispatch(new state.StateDriver({
     servos,
     cmdDuration: (cmd.params.waitForComplete && cmd.params.waitForComplete.value) ? _velocityToDuration(cmd.params.velocity.value / 100) : Infinity,
-  }), cmd.callback);
+  }, 'ease-in-out'), cmd.callback);
 }
 
 /**
@@ -177,7 +177,7 @@ export function headPitchCmdTrans(cmd) {
   _dispatch(new state.StateDriver({
     servos,
     cmdDuration: (cmd.params.waitForComplete && cmd.params.waitForComplete.value) ? _velocityToDuration(cmd.params.velocity.value / 100) : Infinity,
-  }), cmd.callback);
+  }, 'ease-in-out'), cmd.callback);
 }
 
 // === Private ===

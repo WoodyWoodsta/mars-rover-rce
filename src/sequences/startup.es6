@@ -77,8 +77,8 @@ function onBoardReady() {
 
   // Initialise the ultrasonic sensors
   if (!store.hardwareState.proximity.initialised) {
-    // proximity.init();
-    // proximity.start();
+    proximity.init();
+    proximity.start();
   }
 
   store.hardwareState.repush();

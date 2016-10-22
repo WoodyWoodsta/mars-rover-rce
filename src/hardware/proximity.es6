@@ -17,22 +17,16 @@ export let hw = {};
  * Initialise the leds
  */
 export function init() {
+  let time = 0;
+
+  _onFrontSensorData.count = 0;
+
+  // Setup sensors
   hw = {
-    frontSensor: new five.Proximity({
-      controller: config.hardware.proximityController,
-      pin: config.hardware.proximityPins.frontSensor,
-      freq: config.hardware.proximityFreq,
-    }),
-    rearSensor: new five.Proximity({
-      controller: config.hardware.proximityController,
-      pin: config.hardware.proximityPins.rearSensor,
-      freq: config.hardware.proximityFreq,
-    }),
-    headSensor: new five.Proximity({
-      controller: config.hardware.proximityController,
-      pin: config.hardware.proximityPins.headSensor,
-      freq: config.hardware.proximityFreq,
-    }),
+    front: new UltrasonicSensor({
+      triggerPin: config.hardware.proximityTriggerPins.front,
+      voltagePin: config.hardware.proximityVoltagePins.front,
+    }, _onFrontSensorData),
   };
 
   log('Proximity initialised');
@@ -40,23 +34,105 @@ export function init() {
 }
 
 export function start() {
-  hw.frontSensor.on('data', _onFrontSensorData);
-  hw.rearSensor.on('data', _onRearSensorData);
-  hw.headSensor.on('data', _onHeadSensorData);
+  hw.front.start();
+
+  // hw.frontSensor.on('data', _onFrontSensorData);
+  // hw.rearSensor.on('data', _onRearSensorData);
+  // hw.headSensor.on('data', _onHeadSensorData);
 }
 
 export function stop() {
-  hw.frontSensor.removeListener('data', _onFrontSensorData);
-  hw.rearSensor.removeListener('data', _onRearSensorData);
-  hw.headSensor.removeListener('data', _onHeadSensorData);
+  hw.front.stop();
+
+  // hw.frontSensor.removeListener('data', _onFrontSensorData);
+  // hw.rearSensor.removeListener('data', _onRearSensorData);
+  // hw.headSensor.removeListener('data', _onHeadSensorData);
 }
 
 // === Private ===
-function _onFrontSensorData() {
-  const mm = this.cm * 10;
-  store.hardwareState.set('proximity.values.front', mm);
+/**
+ * A custom Ultrasonic Sensor with the required pins and their speficied configuration
+ */
+class UltrasonicSensor {
+  constructor(params, changeCallback) {
+    this.trigger = new five.Pin({
+      pin: params.triggerPin,
+      mode: five.Pin.OUTPUT,
+    });
+    this.voltage = new five.Sensor({
+      pin: params.voltagePin,
+      freq: config.hardware.proximityReadPeriod,
+      threshold: config.hardware.proximityChangeThreshold,
+    });
 
-  this.hardwareState.set('proximity.warn.front', checkObstacle('frontSensor', mm));
+    this._voltageChangeCallback = changeCallback;
+  }
+
+  /**
+   * Start the sensor
+   */
+  start() {
+    // Listen to the voltage pin `change` events, fire callback on event
+    this.voltage.on('change', () => {
+      this._voltageChangeCallback({
+        value: this.voltage.value,
+        voltage: this.voltage.fscaleTo(0, 5),
+        cm: this._calculateCm(this.voltage.fscaleTo(0, 5)),
+      });
+    });
+
+    // Start the trigger
+    this.triggerInt = setInterval(this._pulseTrigger.bind(this), config.hardware.proximityTriggerPeriod);
+  }
+
+  /**
+   * Stop the sensor
+   */
+  stop() {
+    // Remove the voltage changed listener
+    this.voltage.removeListener('change', this._voltageChangedCallback);
+
+    // Stop the trigger
+    clearInterval(this.triggerInt);
+  }
+
+  // === Private ===
+  /**
+   * Drive the trigger pin high for a specified length of time
+   */
+  _pulseTrigger() {
+    this.trigger.high();
+    setTimeout(() => {
+      this.trigger.low();
+    }, config.hardware.proximityTriggerLength);
+  }
+
+  /**
+   * Convert the proximity reading to cm
+   */
+  _calculateCm(voltage) {
+    return voltage * 10;
+  }
+}
+
+/**
+ * Check for proximity warnings and update the store based on new data from the front sensor
+ * @param  {Object} event The event sent from the UltrasonicSensor instance
+ */
+function _onFrontSensorData(event) {
+  const self = _onFrontSensorData;
+  const mm = event.cm * 10;
+
+  self.count++;
+
+  // Only update the store every 5 readings
+  if (self.count > 5) {
+    store.hardwareState.set('proximity.values.front', mm);
+    self.count = 0;
+  }
+
+  // Check for distance threshold warnings
+  store.hardwareState.set('proximity.warn.front', checkObstacle('frontSensor', mm));
 }
 
 function _onRearSensorData() {
@@ -74,11 +150,13 @@ function _onHeadSensorData() {
 }
 
 function checkObstacle(sensor, dist) {
-  if (dist < config.proximityThreshholds.warn[sensor]) {
+  if (dist < config.hardware.proximityThreshholds.shutdown[sensor]) {
+    return 'shutdown';
+  }
+
+  if (dist < config.hardware.proximityThreshholds.warn[sensor]) {
     return 'warn';
   }
 
-  if (dist < config.proximityThreshholds.shutdown[sensor]) {
-    return 'shutdown';
-  }
+  return 'none';
 }
