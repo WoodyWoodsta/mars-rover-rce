@@ -64,7 +64,7 @@ export const config = {
     },
 
     // Threshold at which to warn of obstacle
-    proximityThreshholds: {
+    proximityThresholds: {
       warn: {
         frontSensor: 50,
         rearSensor: 200,

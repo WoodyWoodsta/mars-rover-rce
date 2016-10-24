@@ -85,7 +85,6 @@ function onBoardReady() {
   store.rceState.repush();
 
   rceIOTranslator.requestRepush('control', '*');
-  rceIOTranslator.requestRepush('control', '*');
 
   system.startProcessMonitoring();
 
