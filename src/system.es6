@@ -7,7 +7,8 @@ import MonitorPid from 'monitor-pid';
 
 import * as store from './store';
 import { config } from './config';
-import { camProcessPid, stop as cameraStop } from './hardware/camera';
+import { camProcessPid } from './hardware/camera';
+import * as sequenceManager from './sequences/sequence-manager';
 
 const log = debug('rce:system');
 
@@ -70,9 +71,5 @@ export function stopProcessMonitoring() {
 
 // === Private ===
 function _onBeforeExit() {
-  cameraStop(true, () => {
-    process.exit();
-  });
-
-  log('RCE is exiting...');
+  sequenceManager.exec('powerDown');
 }

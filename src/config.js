@@ -19,6 +19,9 @@ export const config = {
     wheelPitch: 70,
     wheelSpan: 120,
 
+    lowBatteryVoltage: 11.4,
+    criticalBatteryVoltage: 11.1,
+
     servoShield: {
       i2cAddress: 0x40,
       controller: 'PCA9685',
@@ -45,6 +48,31 @@ export const config = {
       driveRearRight: [90, 90],
     },
 
+    servoAdditional: {
+      driveFrontLeft: {
+      },
+      driveFrontRight: {
+        invert: true,
+      },
+      driveRearLeft: {
+      },
+      driveRearRight: {
+        invert: true,
+      },
+      steerFrontLeft: {
+      },
+      steerFrontRight: {
+      },
+      steerRearLeft: {
+      },
+      steerRearRight: {
+      },
+      headPan: {
+      },
+      headPitch: {
+      },
+    },
+
     // How frequently to update measurements
     proximityReadPeriod: 100,
     proximityTriggerPeriod: 33,
@@ -52,29 +80,29 @@ export const config = {
     proximityChangeThreshold: 1,
 
     proximityVoltagePins: {
-      front: 'A0',
-      rear: 'A1',
-      head: 'A2',
+      front: 'A2',
+      rear: 'A0',
+      head: 'A1',
     },
 
     proximityTriggerPins: {
-      front: 3,
-      rear: 4,
-      head: 5,
+      front: 4,
+      rear: 2,
+      head: 3,
     },
 
     // Threshold at which to warn of obstacle
     proximityThresholds: {
       warn: {
-        frontSensor: 50,
-        rearSensor: 200,
-        headSensor: 100,
+        frontSensor: 80,
+        rearSensor: 80,
+        headSensor: 80,
       },
 
       shutdown: {
-        frontSensor: 20,
-        rearSensor: 30,
-        headSensor: 30,
+        frontSensor: 15,
+        rearSensor: 15,
+        headSensor: 0,
       },
     },
 
@@ -83,6 +111,10 @@ export const config = {
       rearSensor: 5000,
       headSensor: 5000,
     },
+
+    batterySensorPin: 'A3',
+    batterySensorReadPeriod: 1000,
+    batterySensorChangeThreshold: 1,
 
     cameraMaxRetry: 3,
     cameraStartCmdLine: '/usr/local/bin/mjpg_streamer -i "/usr/local/lib/input_uvc.so -d /dev/video0 -n -r 640x480 -f 30" -o "/usr/local/lib//output_http.so -n -p 8080 -w /usr/local/www"',

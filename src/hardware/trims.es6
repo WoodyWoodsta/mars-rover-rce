@@ -1,25 +1,29 @@
 /* trims.es6 */
 export const servos = {
   offset: {
-    driveFrontLeft: 0,
-    driveFrontRight: 0,
-    driveRearLeft: 0,
-    driveRearRight: 0,
+    driveFrontLeft: 2,
+    driveFrontRight: -1,
+    driveRearLeft: 1,
+    driveRearRight: -1,
     steerFrontLeft: 0,
     steerFrontRight: 0,
     steerRearLeft: 0,
-    steerRearRight: 0,
+    steerRearRight: -20,
+    headPan: 6,
+    headPitch: 0,
   },
 
   multiplier: {
-    driveFrontLeft: 0,
-    driveFrontRight: 0,
-    driveRearLeft: 0,
-    driveRearRight: 0,
-    steerFrontLeft: 0,
-    steerFrontRight: 0,
-    steerRearLeft: 0,
-    steerRearRight: 0,
+    driveFrontLeft: 0.3,
+    driveFrontRight: 0.3,
+    driveRearLeft: 0.3,
+    driveRearRight: 0.3,
+    steerFrontLeft: 1,
+    steerFrontRight: 1,
+    steerRearLeft: 1,
+    steerRearRight: 1,
+    headPan: 1,
+    headPitch: 1,
   },
 };
 

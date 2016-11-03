@@ -6,11 +6,11 @@
  *  - Start the servers ✓
  *  - Initialise the board ✓
  *  - Register board listeners
- *  - Initialise analog inputs
+ *  - Initialise analog inputs ✓
  *  - Check vitals: only proceed if vitals pass
  *  - Initialise leds ✓
  *  - Initialise servos ✓
- *  - Initialise proximity sensors
+ *  - Initialise proximity sensors ✓
  *  - Initialise camera ✓
  *  - Establish connection with RSVP server
  *    - Sockets
@@ -23,6 +23,7 @@ import debug from 'debug';
 import server from '../server';
 import * as boardDriver from '../hardware/board';
 import * as leds from '../hardware/leds';
+import * as analog from '../hardware/analog';
 import * as servos from '../hardware/servos';
 import * as camera from '../hardware/camera';
 import * as proximity from '../hardware/proximity';
@@ -32,7 +33,7 @@ import * as stateLoop from '../control/state';
 import * as switcher from '../control/switcher';
 import * as rceIOTranslator from '../servers/rce-io-translator';
 
-const log = debug('rce:startup-sequence');
+const log = debug('rce:sequence:startup');
 
 export default function seq() {
   // Initialise the system
@@ -64,6 +65,10 @@ function onBoardReady() {
     leds.init();
   }
   leds.tempBlink(leds.hw.indicator, 100, 3);
+
+  if (!store.hardwareState.analog.initialised) {
+    analog.init();
+  }
 
   // Initialise the Servos
   if (!store.hardwareState.servos.initialised) {

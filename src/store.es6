@@ -160,6 +160,8 @@ export const rceState = new DataStore('rceState', 'source', true, {
   camCpu: undefined,
   camMemory: undefined,
 
+  systemState: undefined,
+
   controller: {
     sequence: [],
     currentSequenceIndex: null,
@@ -172,6 +174,7 @@ export const rceState = new DataStore('rceState', 'source', true, {
   camCpu: ['rceIO'],
   camMemory: ['rceIO'],
   controller: ['rceIO'],
+  systemState: ['rceIO'],
 });
 
 /**
@@ -189,6 +192,12 @@ export const hardwareState = new DataStore('hardwareState', 'source', true, {
   },
   analog: {
     initialised: false,
+    values: {
+      battery: 0,
+    },
+    warnings: {
+      battery: 'none',
+    },
   },
   camera: {
     initialised: false,

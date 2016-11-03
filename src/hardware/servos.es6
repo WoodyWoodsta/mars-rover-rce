@@ -6,6 +6,7 @@ import objectPath from 'object-path';
 
 import { config } from '../config';
 import * as store from '../store';
+import { servos as servoTrims } from './trims';
 
 const log = debug('rce:board-servos');
 
@@ -26,9 +27,9 @@ export function init() {
     driveFrontLeft: new five.Servo({
       address: config.hardware.servoShield.i2cAddress,
       controller: config.hardware.servoShield.controller,
-      type: 'continuous',
       deadband: config.hardware.servoDeadband.driveFrontLeft,
       pin: config.hardware.servoPins.driveFrontLeft,
+      ...config.hardware.servoAdditional.driveFrontLeft,
     }),
     /**
      * Front right drive servo
@@ -36,9 +37,9 @@ export function init() {
     driveFrontRight: new five.Servo({
       address: config.hardware.servoShield.i2cAddress,
       controller: config.hardware.servoShield.controller,
-      type: 'continuous',
       deadband: config.hardware.servoDeadband.driveFrontRight,
       pin: config.hardware.servoPins.driveFrontRight,
+      ...config.hardware.servoAdditional.driveFrontRight,
     }),
     /**
      * Rear left drive servo
@@ -46,9 +47,9 @@ export function init() {
     driveRearLeft: new five.Servo({
       address: config.hardware.servoShield.i2cAddress,
       controller: config.hardware.servoShield.controller,
-      type: 'continuous',
       deadband: config.hardware.servoDeadband.driveRearLeft,
       pin: config.hardware.servoPins.driveRearLeft,
+      ...config.hardware.servoAdditional.driveRearLeft,
     }),
     /**
      * Rear right drive servo
@@ -56,9 +57,9 @@ export function init() {
     driveRearRight: new five.Servo({
       address: config.hardware.servoShield.i2cAddress,
       controller: config.hardware.servoShield.controller,
-      type: 'continuous',
       deadband: config.hardware.servoDeadband.driveRearRight,
       pin: config.hardware.servoPins.driveRearRight,
+      ...config.hardware.servoAdditional.driveRearRight,
     }),
     /**
      * Front left steering servo
@@ -67,6 +68,7 @@ export function init() {
       address: config.hardware.servoShield.i2cAddress,
       controller: config.hardware.servoShield.controller,
       pin: config.hardware.servoPins.steerFrontLeft,
+      ...config.hardware.servoAdditional.steerFrontLeft,
     }),
     /**
      * Front right steering servo
@@ -75,6 +77,7 @@ export function init() {
       address: config.hardware.servoShield.i2cAddress,
       controller: config.hardware.servoShield.controller,
       pin: config.hardware.servoPins.steerFrontRight,
+      ...config.hardware.servoAdditional.steerFrontRight,
     }),
     /**
      * Rear left steering servo
@@ -83,6 +86,7 @@ export function init() {
       address: config.hardware.servoShield.i2cAddress,
       controller: config.hardware.servoShield.controller,
       pin: config.hardware.servoPins.steerRearLeft,
+      ...config.hardware.servoAdditional.steerRearLeft,
     }),
     /**
      * Rear right steering servo
@@ -91,6 +95,7 @@ export function init() {
       address: config.hardware.servoShield.i2cAddress,
       controller: config.hardware.servoShield.controller,
       pin: config.hardware.servoPins.steerRearRight,
+      ...config.hardware.servoAdditional.steerRearRight,
     }),
     /**
      * Head pan servo
@@ -99,6 +104,7 @@ export function init() {
       address: config.hardware.servoShield.i2cAddress,
       controller: config.hardware.servoShield.controller,
       pin: config.hardware.servoPins.headPan,
+      ...config.hardware.servoAdditional.headPan,
     }),
     /**
      * Head tilt servo
@@ -107,6 +113,7 @@ export function init() {
       address: config.hardware.servoShield.i2cAddress,
       controller: config.hardware.servoShield.controller,
       pin: config.hardware.servoPins.headPitch,
+      ...config.hardware.servoAdditional.headPitch,
     }),
   };
 
@@ -118,39 +125,71 @@ export function init() {
   log('Servos initialised');
 }
 
+/**
+ * Set the servo to the input value, with trims and modifiers applied
+ * @param {String} servo The name of the servo
+ * @param {Number} value The signal value
+ */
 export function setServo(servo, value) {
   let signal;
   switch (servo) {
-    // TODO: Update the driving ones before making the servo continuous
-    case 'driveFrontLeft':
-      signal = (value * 70) + 90;
+    case 'driveFrontLeft': {
+      let _value = value;
+      _value *= servoTrims.multiplier.driveFrontLeft;
+      signal = (_value * 90) + 90; // Continuous
+      signal += servoTrims.offset.driveFrontLeft;
       break;
-    case 'driveFrontRight':
-      signal = (value * 70) + 90;
+    }
+    case 'driveFrontRight': {
+      let _value = value;
+      _value *= servoTrims.multiplier.driveFrontLeft;
+      signal = (_value * 90) + 90; // Continuous
+      signal += servoTrims.offset.driveFrontRight;
       break;
-    case 'driveRearLeft':
-      signal = (value * 70) + 90;
+    }
+    case 'driveRearLeft': {
+      let _value = value;
+      _value *= servoTrims.multiplier.driveFrontLeft;
+      signal = (_value * 90) + 90; // Continuous
+      signal += servoTrims.offset.driveRearLeft;
       break;
-    case 'driveRearRight':
-      signal = (value * 70) + 90;
+    }
+    case 'driveRearRight': {
+      let _value = value;
+      _value *= servoTrims.multiplier.driveFrontLeft;
+      signal = (_value * 90) + 90; // Continuous
+      signal += servoTrims.offset.driveRearRight;
       break;
+    }
     case 'steerFrontLeft':
       signal = value + 90;
+      signal *= servoTrims.multiplier.steerFrontLeft;
+      signal += servoTrims.offset.steerFrontLeft;
       break;
     case 'steerFrontRight':
       signal = value + 90;
+      signal *= servoTrims.multiplier.steerFrontRight;
+      signal += servoTrims.offset.steerFrontRight;
       break;
     case 'steerRearLeft':
       signal = value + 90;
+      signal *= servoTrims.multiplier.steerRearLeft;
+      signal += servoTrims.offset.steerRearLeft;
       break;
     case 'steerRearRight':
       signal = value + 90;
+      signal *= servoTrims.multiplier.steerRearRight;
+      signal += servoTrims.offset.steerRearRight;
       break;
     case 'headPan':
       signal = value + 90;
+      signal *= servoTrims.multiplier.headPan;
+      signal += servoTrims.offset.headPan;
       break;
     case 'headPitch':
       signal = value + 90;
+      signal *= servoTrims.multiplier.headPitch;
+      signal += servoTrims.offset.headPitch;
       break;
     default:
 

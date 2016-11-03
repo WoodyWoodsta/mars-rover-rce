@@ -120,6 +120,8 @@ export class StateDriver {
 export function start() {
   interval = setInterval(_stateLoop, config.hardware.stateLoopInterval);
   store.rceState.set('controller.stateLoopRunning', true);
+
+  store.rceState.on('systemState-changed', _onSystemStateChanged);
 }
 
 /**
@@ -129,24 +131,30 @@ export function stop() {
   if (!store.rceState.controller.stateLoopRunning) {
     clearInterval(interval);
     store.rceState.set('controller.stateLoopRunning', false);
+
+    store.rceState.removeListener('systemState-changed', _onSystemStateChanged);
   }
 }
 
 /**
  * Update the setpoint signals for the loop to interpolate to (asynchronously). If there is a change between the driving signal
  * and the setpoint, reset the age of the state change motion
- * @param {StateDriver} driver The object of desired hardware signal setpoints
+ * @param {StateDriver} driver        The object of desired hardware signal setpoints
+ * @param {Boolean}     bypassChecks  Do not check for obstacle or emergency-shutdown
  */
-export function setSignals(driver) {
-  Object.keys(driver.servos).forEach((servo) => {
-    if (setpoints.servos[servo].value !== driver.servos[servo].value) {
-      setpoints.servos[servo] = {
-        ...driver.servos[servo],
-        _age: 0,
-        start: store.hardwareState.servos.values[servo],
-      };
-    }
-  });
+export function setSignals(driver, bypassChecks) {
+  // Only change signals if there are no detected obstacles or in an emergency shutdown
+  if (bypassChecks || (store.rceState.systemState !== 'obstacle' && store.rceState.systemState !== 'emergency-shutdown')) {
+    Object.keys(driver.servos).forEach((servo) => {
+      if (setpoints.servos[servo].value !== driver.servos[servo].value) {
+        setpoints.servos[servo] = {
+          ...driver.servos[servo],
+          _age: 0,
+          start: store.hardwareState.servos.values[servo],
+        };
+      }
+    });
+  }
 }
 
 // === Private ===
@@ -209,4 +217,23 @@ function _effectServoChange(servo) {
   // TODO: Consider setting the servos directly and updating the store at a later stage
   store.hardwareState.servos.values[servo] = newState;
   servos.setServo(servo, newState);
+}
+
+/**
+ * Block control input if the system goes into emergency mode
+ * @param  {Object} event The data change event
+ */
+function _onSystemStateChanged(event) {
+  log(`System state changed to ${event.newValue}`);
+  if (event.newValue === 'obstacle' || event.newValue === 'emergency-shutdown') {
+    const driveServos = {
+      driveFrontLeft: { value: 0 },
+      driveFrontRight: { value: 0 },
+      driveRearLeft: { value: 0 },
+      driveRearRight: { value: 0 },
+    };
+
+    // Set the drive servos to zero
+    setSignals(new StateDriver({ servos: driveServos }), true);
+  }
 }

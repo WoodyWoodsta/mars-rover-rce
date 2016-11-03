@@ -1,11 +1,14 @@
 /* index.es6 */
 import debug from 'debug';
 
-import startup from './sequences/startup';
+import * as sequenceManager from './sequences/sequence-manager';
+import * as store from './store';
 
 const log = debug('rce:main');
 
 log('Mars Curiosity Rover RCE is starting up...');
 
 // Fire the startup sequence
-startup();
+sequenceManager.exec('startup', () => {
+  store.rceState.set('systemState', 'normal');
+});

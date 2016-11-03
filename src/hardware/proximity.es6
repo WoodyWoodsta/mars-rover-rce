@@ -4,6 +4,7 @@ import * as five from 'johnny-five';
 
 import { config } from '../config';
 import * as store from '../store';
+import * as sequenceManager from '../sequences/sequence-manager';
 
 const log = debug('rce:proximity');
 
@@ -47,11 +48,20 @@ export function init() {
  * Start the proximity system
  */
 export function start() {
+  if (store.hardwareState.proximity.running) {
+    log('Proximity system is already running');
+    return;
+  }
+
+  // Manually activate 'nav' proximity at the start
   hw.front.start();
   hw.rear.start();
 
   store.hardwareState.set('proximity.running', true);
   store.hardwareState.set('proximity.activeGroup', 'nav');
+
+  store.hardwareState.on('proximity.warn.front-changed', _onProximityWarn);
+  store.hardwareState.on('proximity.warn.rear-changed', _onProximityWarn);
 }
 
 /**
@@ -60,6 +70,7 @@ export function start() {
 export function stop() {
   hw.front.stop();
   hw.rear.stop();
+  hw.head.stop();
 
   store.hardwareState.set('proximity.running', false);
 }
@@ -135,7 +146,10 @@ class UltrasonicSensor {
     this.voltage.removeListener('change', this._voltageChangedCallback);
 
     // Stop the trigger
-    clearInterval(this.triggerInt);
+    if (this.triggerInt) {
+      clearInterval(this.triggerInt);
+      this.triggerInt = undefined;
+    }
   }
 
   // === Private ===
@@ -233,4 +247,19 @@ function checkObstacle(sensor, dist) {
   }
 
   return 'none';
+}
+
+/**
+ * On a proximity warning, indicate that there is an obstacle
+ * @param  {Object} event The data change event
+ */
+function _onProximityWarn(event) {
+  if (event.newValue === 'shutdown') {
+    sequenceManager.exec('enterObstacleMode');
+  } else if (store.rceState.systemState === 'obstacle'
+    && store.hardwareState.proximity.warn.front !== 'shutdown'
+    && store.hardwareState.proximity.warn.rear !== 'shutdown') {
+    // Exit obstacle mode if the proximity sensors show no obstacle
+    sequenceManager.exec('exitObstacleMode');
+  }
 }
