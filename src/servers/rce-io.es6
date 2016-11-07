@@ -8,6 +8,10 @@ const log = debug('rce:socket');
 
 let rceIO;
 
+/**
+ * Initialise the socket instance and attach the associated handlers to it
+ * @param  {Object} socket The socket instance
+ */
 export default function init(socket) {
   rceIO = socket;
 

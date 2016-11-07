@@ -1,5 +1,8 @@
 /* sequence.es6 */
 
+/**
+ * The base class for a command
+ */
 export class SeqCmd {
   constructor(name, type, params = {}) {
     this.name = name;
@@ -9,6 +12,9 @@ export class SeqCmd {
   }
 }
 
+/**
+ * Command the rover to "do nothing" for a specified duration
+ */
 export class PauseCmd extends SeqCmd {
   constructor(params = {}) {
     super('Pause', 'low');
