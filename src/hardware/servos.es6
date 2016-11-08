@@ -6,7 +6,7 @@ import objectPath from 'object-path';
 
 import { config } from '../config';
 import * as store from '../store';
-import { servos as servoTrims } from './trims';
+import { servos as servoTrims, init as initTrims } from './trims';
 
 const log = debug('rce:board-servos');
 
@@ -117,6 +117,9 @@ export function init() {
     }),
   };
 
+  // Initialise the trims module
+  initTrims();
+  
   // TODO: Do some servo centering and stuff here
 
   store.hardwareState.set('servos.initialised', true);

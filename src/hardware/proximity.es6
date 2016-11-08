@@ -18,8 +18,6 @@ export let hw = {};
  * Initialise the leds
  */
 export function init() {
-  let time = 0;
-
   _onFrontSensorData.count = 0;
 
   // Setup sensors

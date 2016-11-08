@@ -2,6 +2,7 @@
 import * as store from '../store';
 import debug from 'debug';
 import * as rceIO from './rce-io';
+import { save as saveTrims } from '../hardware/trims';
 
 const log = debug('rce:rce-io-translator');
 
@@ -30,6 +31,9 @@ export function onPost(event) {
     case 'playback-sequence':
       store.rceState.set('controller.sequenceState', 'running');
       break;
+    case 'update-trims':
+      store.hardwareState.set('trims.servos', event.data.payload);
+      break;
     default:
 
   }
@@ -45,6 +49,9 @@ export function onRequest(event) {
       } else {
         log(`No such store '${event.data.payload.storeName}' found`);
       }
+      break;
+    case 'save-trims':
+      saveTrims();
       break;
     default:
 

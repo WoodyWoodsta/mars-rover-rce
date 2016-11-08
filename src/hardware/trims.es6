@@ -1,5 +1,17 @@
 /* trims.es6 */
-export const servos = {
+
+import fs from 'fs';
+import path from 'path';
+import debug from 'debug';
+
+import * as store from '../store';
+
+const log = debug('rce:trims');
+
+const SERVOS_FILEPATH = path.join(__dirname, 'servo-trims.json');
+const PROXIMITY_FILEPATH = path.join(__dirname, 'proximity-trims.json');
+
+export let servos = {
   offset: {
     driveFrontLeft: 2,
     driveFrontRight: -1,
@@ -27,13 +39,67 @@ export const servos = {
   },
 };
 
-export const proximity = {
+export let proximity = {
   modifiers: {
     front: _frontUsSensorMod,
     rear: _rearUsSensorMod,
     head: _headUsSensorMod,
   },
 };
+
+export function init() {
+  log('Checking for saved trim data...');
+
+  // Servos trims first check and load
+  if (!fs.existsSync(SERVOS_FILEPATH)) {
+    save('servos');
+  } else {
+    readSaved('servos');
+  }
+
+  // Proximity sensors trims first check and load
+  // if (!fs.existsSync(PROXIMITY_FILEPATH)) {
+  //   save('proximity');
+  // } else {
+  //   readSaved('proximity');
+  // }
+
+  store.hardwareState.on('trims.servos-changed', _onServosChanged);
+
+  log('Trims loaded');
+}
+
+/**
+ * Save the currently set trim data to a file
+ * @param  {String} group The group of trim data to save (saved in separate files). Omit for both
+ */
+export function save(group) {
+  if (!group || group === 'servos') {
+    fs.writeFileSync(SERVOS_FILEPATH, JSON.stringify(servos));
+  }
+
+  // if (!group || group === 'proximity') {
+  //   fs.writeFileSync(PROXIMITY_FILEPATH, JSON.stringify(proximity));
+  // }
+
+  log('Trims saved to file');
+}
+
+/**
+ * Reads in the saved trim files, if they exist
+ * @param  {String} group The group of trim data to read (saved in different files). Omit for both
+ */
+export function readSaved(group) {
+  if ((!group || group === 'servos') && fs.existsSync(SERVOS_FILEPATH)) {
+    servos = JSON.parse(fs.readFileSync(SERVOS_FILEPATH));
+    store.hardwareState.set('trims.servos', servos);
+  }
+
+  // if ((!group || group === 'proximity') && fs.existsSync(PROXIMITY_FILEPATH)) {
+  //   proximity = JSON.parse(fs.readFileSync(PROXIMITY_FILEPATH));
+  //   store.hardwareState.set('trims.proximity', servos);
+  // }
+}
 
 // === Modifiers ===
 function _frontUsSensorMod(value) {
@@ -46,4 +112,11 @@ function _rearUsSensorMod(value) {
 
 function _headUsSensorMod(value) {
   return value;
+}
+
+// === Private ===
+function _onServosChanged(event) {
+  servos = event.newValue;
+
+  store.rceState.set('updatingTrims', true);
 }

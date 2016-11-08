@@ -166,6 +166,16 @@ function _stateLoop() {
   Object.keys(setpoints.servos).forEach((servo) => {
     _evalChange(servo, `servos.values.${servo}`);
   });
+
+  // Force the servos to update
+  if (store.rceState.updatingTrims) {
+    Object.keys(setpoints.servos).forEach((servo) => {
+      setpoints.servos[servo]._age = 0;
+      _evalChange(servo, `servos.values.${servo}`, true);
+    });
+
+    store.rceState.set('updatingTrims', false);
+  }
 }
 
 /**
@@ -174,11 +184,11 @@ function _stateLoop() {
  * @param  {String} component   The name of the component in the setpoints object
  * @param  {String} pathToState Path in the store to the current state of that component
  */
-function _evalChange(component, pathToState) {
+function _evalChange(component, pathToState, bypass) {
   const state = objectPath.get(store.hardwareState, pathToState);
   const driver = setpoints.servos[component];
 
-  if (driver.value !== state) {
+  if (driver.value !== state || bypass) {
     driver._age += config.hardware.stateLoopInterval;
     _effectServoChange(component);
   }
@@ -197,7 +207,7 @@ function _effectServoChange(servo) {
   let newState;
 
   // Use the specified timging function
-  if (time <= duration) {
+  if (time < duration) {
     switch (driver.timingFunc) {
       case 'ease-out':
         newState = penner[`easeOut${config.hardware.stateLoopPennerFamily}`](time, driver.start, delta, duration);
@@ -212,6 +222,9 @@ function _effectServoChange(servo) {
     }
   } else {
     newState = driver.value;
+
+    // Make sure the setpoint and the start value are the same at the end of the transition
+    setpoints.servos[servo].start = newState;
   }
 
   // TODO: Consider setting the servos directly and updating the store at a later stage
