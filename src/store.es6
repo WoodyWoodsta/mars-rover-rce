@@ -124,7 +124,9 @@ class DataStore extends EventEmitter {
           this._climbDownPath(fullPath, `${path}.${key}`, newValue[key], (oldValue) ? (oldValue[key]) : undefined);
         }
 
-        this._emitChange(fullPath, `${path}.${key}`, newValue[key], (oldValue) ? (oldValue[key]) : undefined);
+        if (fullPath !== `${path}.${key}`) {
+          this._emitChange(fullPath, `${path}.${key}`, newValue[key], (oldValue) ? (oldValue[key]) : undefined);
+        }
       });
     }
   }
@@ -170,6 +172,11 @@ export const rceState = new DataStore('rceState', 'source', true, {
     sequenceState: 'off',
     stateLoopRunning: false,
   },
+
+  selfDiagnostics: {
+    running: false,
+  },
+
 }, {
   rceCpu: ['rceIO'],
   rceMemory: ['rceIO'],
@@ -178,6 +185,7 @@ export const rceState = new DataStore('rceState', 'source', true, {
   controller: ['rceIO'],
   systemState: ['rceIO'],
   updatingTrims: ['rceIO'],
+  selfDiagnostics: ['rceIO'],
 });
 
 /**
@@ -296,6 +304,11 @@ export const control = new DataStore('control', 'sink', false, {
   headInput: {
     xMag: 0,
     yMag: 0,
+  },
+
+  buttons: {
+    rotateCW: false,
+    rotateCCW: false,
   },
 
   testLED: {

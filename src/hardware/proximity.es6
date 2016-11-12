@@ -19,6 +19,8 @@ export let hw = {};
  */
 export function init() {
   _onFrontSensorData.count = 0;
+  _onRearSensorData.count = 0;
+  _onHeadSensorData.count = 0;
 
   // Setup sensors
   hw = {

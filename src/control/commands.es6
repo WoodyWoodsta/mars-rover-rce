@@ -1,4 +1,4 @@
-/* sequence.es6 */
+/* commands.es6 */
 
 /**
  * The base class for a command

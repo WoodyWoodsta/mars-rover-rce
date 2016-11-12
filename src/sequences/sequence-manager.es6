@@ -6,6 +6,7 @@ import powerDown from './power-down';
 import emergencyShutdown from './emergency-shutdown';
 import enterObstacleMode from './enter-obstacle-mode';
 import exitObstacleMode from './exit-obstacle-mode';
+import selfDiagnostics from './self-diagnostics';
 
 const log = debug('rce:system-sequences');
 
@@ -35,4 +36,5 @@ export const sequences = {
   emergencyShutdown,
   enterObstacleMode,
   exitObstacleMode,
+  selfDiagnostics,
 };

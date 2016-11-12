@@ -68,6 +68,7 @@ export const config = {
       steerRearRight: {
       },
       headPan: {
+        invert: true,
       },
       headPitch: {
       },
