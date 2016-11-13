@@ -175,6 +175,7 @@ export const rceState = new DataStore('rceState', 'source', true, {
 
   selfDiagnostics: {
     running: false,
+    status: undefined,
   },
 
 }, {

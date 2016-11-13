@@ -66,33 +66,33 @@ function _decodeCommands() {
           velocity: 0,
           waitForComplete: false,
         });
-        cmd1._index = index;
+        cmd1._seqIndex = index;
         const cmd2 = new commands.SingleWheelRotateCmd({
           wheel: 'fr',
           angle: -45,
           velocity: 0,
           waitForComplete: false,
         });
-        cmd2._index = index;
+        cmd2._seqIndex = index;
         const cmd3 = new commands.SingleWheelRotateCmd({
           wheel: 'rl',
           angle: -45,
           velocity: 0,
           waitForComplete: false,
         });
-        cmd3._index = index;
+        cmd3._seqIndex = index;
         const cmd4 = new commands.SingleWheelRotateCmd({
           wheel: 'rr',
           angle: 45,
           velocity: 0,
           waitForComplete: true,
         });
-        cmd4._index = index;
+        cmd4._seqIndex = index;
 
         const cmd5 = new commands.PauseCmd({
           duration: 1,
         });
-        cmd5._index = index;
+        cmd5._seqIndex = index;
 
         const cmd6 = new commands.SingleWheelDriveCmd({
           duration: Infinity,
@@ -100,28 +100,28 @@ function _decodeCommands() {
           wheel: 'fl',
           direction: (cmd.params.direction.value === 'cw') ? 'fwd' : 'rev',
         });
-        cmd6._index = index;
+        cmd6._seqIndex = index;
         const cmd7 = new commands.SingleWheelDriveCmd({
           duration: Infinity,
           velocity: cmd.params.velocity.value,
           wheel: 'fr',
           direction: (cmd.params.direction.value === 'ccw') ? 'fwd' : 'rev',
         });
-        cmd7._index = index;
+        cmd7._seqIndex = index;
         const cmd8 = new commands.SingleWheelDriveCmd({
           duration: Infinity,
           velocity: cmd.params.velocity.value,
           wheel: 'rl',
           direction: (cmd.params.direction.value === 'cw') ? 'fwd' : 'rev',
         });
-        cmd8._index = index;
+        cmd8._seqIndex = index;
         const cmd9 = new commands.SingleWheelDriveCmd({
           duration: Infinity,
           velocity: cmd.params.velocity.value,
           wheel: 'rr',
           direction: (cmd.params.direction.value === 'ccw') ? 'fwd' : 'rev',
         });
-        cmd9._index = index;
+        cmd9._seqIndex = index;
 
         currentSequence.push(cmd1);
         currentSequence.push(cmd2);
@@ -138,7 +138,7 @@ function _decodeCommands() {
           const cmd10 = new commands.PauseCmd({
             duration: cmd.params.duration.value,
           });
-          cmd10._index = index;
+          cmd10._seqIndex = index;
 
           const cmd11 = new commands.SingleWheelDriveCmd({
             duration: Infinity,
@@ -146,28 +146,28 @@ function _decodeCommands() {
             wheel: 'fl',
             direction: (cmd.params.direction.value === 'cw') ? 'fwd' : 'rev',
           });
-          cmd11._index = index;
+          cmd11._seqIndex = index;
           const cmd12 = new commands.SingleWheelDriveCmd({
             duration: Infinity,
             velocity: 0,
             wheel: 'fr',
             direction: (cmd.params.direction.value === 'cw') ? 'fwd' : 'rev',
           });
-          cmd12._index = index;
+          cmd12._seqIndex = index;
           const cmd13 = new commands.SingleWheelDriveCmd({
             duration: Infinity,
             velocity: 0,
             wheel: 'rl',
             direction: (cmd.params.direction.value === 'cw') ? 'fwd' : 'rev',
           });
-          cmd13._index = index;
+          cmd13._seqIndex = index;
           const cmd14 = new commands.SingleWheelDriveCmd({
             duration: Infinity,
             velocity: 0,
             wheel: 'rr',
             direction: (cmd.params.direction.value === 'cw') ? 'fwd' : 'rev',
           });
-          cmd14._index = index;
+          cmd14._seqIndex = index;
 
           const cmd15 = new commands.SingleWheelRotateCmd({
             wheel: 'fl',
@@ -175,28 +175,28 @@ function _decodeCommands() {
             velocity: 0,
             waitForComplete: false,
           });
-          cmd15._index = index;
+          cmd15._seqIndex = index;
           const cmd16 = new commands.SingleWheelRotateCmd({
             wheel: 'fr',
             angle: 0,
             velocity: 0,
             waitForComplete: false,
           });
-          cmd16._index = index;
+          cmd16._seqIndex = index;
           const cmd17 = new commands.SingleWheelRotateCmd({
             wheel: 'rl',
             angle: 0,
             velocity: 0,
             waitForComplete: false,
           });
-          cmd17._index = index;
+          cmd17._seqIndex = index;
           const cmd18 = new commands.SingleWheelRotateCmd({
             wheel: 'rr',
             angle: 0,
             velocity: 0,
             waitForComplete: true,
           });
-          cmd18._index = index;
+          cmd18._seqIndex = index;
 
           currentSequence.push(cmd10);
           currentSequence.push(cmd11);
@@ -216,14 +216,14 @@ function _decodeCommands() {
           velocity: cmd.params.velocity.value,
           waitForComplete: false,
         });
-        cmd1._index = index;
+        cmd1._seqIndex = index;
 
         const cmd2 = new commands.HeadPitchCmd({
           angle: cmd.params.pitchAngle.value,
           velocity: cmd.params.velocity.value,
           waitForComplete: cmd.params.waitForComplete.value,
         });
-        cmd._index = index;
+        cmd._seqIndex = index;
 
         currentSequence.push(cmd1);
         currentSequence.push(cmd2);

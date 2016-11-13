@@ -3,6 +3,7 @@ import * as store from '../store';
 import debug from 'debug';
 import * as rceIO from './rce-io';
 import { save as saveTrims } from '../hardware/trims';
+import * as sequenceManager from '../sequences/sequence-manager';
 
 const log = debug('rce:rce-io-translator');
 
@@ -33,6 +34,9 @@ export function onPost(event) {
       break;
     case 'update-trims':
       store.hardwareState.set('trims.servos', event.data.payload);
+      break;
+    case 'run-self-diagnostics':
+      sequenceManager.exec('selfDiagnostics');
       break;
     default:
 

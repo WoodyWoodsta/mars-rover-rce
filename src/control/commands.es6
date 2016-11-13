@@ -127,7 +127,7 @@ export class DriveCmd extends SeqCmd {
         type: 'Number',
         unit: null,
         icon: 'rsvp:angle',
-        value: params.arc || null,
+        value: (params.arc !== undefined) ? params.arc : null,
       },
     };
   }
@@ -142,7 +142,7 @@ export class WheelsRotateCmd extends SeqCmd {
         type: 'Number',
         unit: null,
         icon: 'rsvp:angle',
-        value: params.arc || null,
+        value: (params.arc !== undefined) ? params.arc : null,
       },
       velocity: {
         type: 'Number',
@@ -191,7 +191,7 @@ export class HeadPanCmd extends SeqCmd {
         type: 'Number',
         unit: 'deg',
         icon: 'rsvp:angle',
-        value: params.angle || null,
+        value: (params.angle !== undefined) ? params.angle : null,
       },
       velocity: {
         type: 'Number',
@@ -218,7 +218,7 @@ export class HeadPitchCmd extends SeqCmd {
         type: 'Number',
         unit: 'deg',
         icon: 'rsvp:angle',
-        value: params.angle || null,
+        value: (params.angle !== undefined) ? params.angle : null,
       },
       velocity: {
         type: 'Number',
@@ -245,13 +245,13 @@ export class HeadPositionCmd extends SeqCmd {
         type: 'Number',
         unit: 'deg',
         icon: 'rsvp:angle',
-        value: params.panAngle || null,
+        value: (params.panAngle !== undefined) ? params.panAngle : null,
       },
       pitchAngle: {
         type: 'Number',
         unit: 'deg',
         icon: 'rsvp:angle',
-        value: params.pitchAngle || null,
+        value: (params.pitchAngle !== undefined) ? params.pitchAngle : null,
       },
       velocity: {
         type: 'Number',
