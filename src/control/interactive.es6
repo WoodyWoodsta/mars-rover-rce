@@ -54,7 +54,7 @@ export function deinit() {
  * @param  {Object} event The incomming property change event
  */
 function _driveInputRelay(event) {
-  const direction = (event.newValue.yMag < 0) ? 'rev' : 'fwd';
+  const direction = (event.newValue.yMag < 0) ? 'fwd' : 'rev';
 
   dispatch.driveCmdTrans({
     params: {

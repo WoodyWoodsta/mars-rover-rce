@@ -287,10 +287,10 @@ function _computeWheelVelocities(arcFactor, velocity, direction) {
     diffFactor = Math.abs(arcs.smallRadius / arcs.largeRadius);
   }
 
-  servos[`driveFront${arcs.smallSide}`].value = ((1 - velocity) * diffFactor * ((direction === 'fwd') ? 1 : -1)) / 100;
-  servos[`driveFront${arcs.largeSide}`].value = ((1 - velocity) * ((direction === 'fwd') ? 1 : -1)) / 100;
-  servos[`driveRear${arcs.smallSide}`].value = ((1 - velocity) * diffFactor * ((direction === 'fwd') ? 1 : -1)) / 100;
-  servos[`driveRear${arcs.largeSide}`].value = ((1 - velocity) * ((direction === 'fwd') ? 1 : -1)) / 100;
+  servos[`driveFront${arcs.smallSide}`].value = ((1 - velocity) * diffFactor * ((direction === 'rev') ? 1 : -1)) / 100;
+  servos[`driveFront${arcs.largeSide}`].value = ((1 - velocity) * ((direction === 'rev') ? 1 : -1)) / 100;
+  servos[`driveRear${arcs.smallSide}`].value = ((1 - velocity) * diffFactor * ((direction === 'rev') ? 1 : -1)) / 100;
+  servos[`driveRear${arcs.largeSide}`].value = ((1 - velocity) * ((direction === 'rev') ? 1 : -1)) / 100;
 
   return servos;
 }
