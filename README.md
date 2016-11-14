@@ -1,4 +1,4 @@
-![repocover](https://cloud.githubusercontent.com/assets/8268040/20277890/37f2b15e-aaab-11e6-9045-a686b044b1bf.png)
+![repocover](https://cloud.githubusercontent.com/assets/8268040/20277992/a7f23d1c-aaab-11e6-91e1-944171474fa7.png)
 
 # mars-rover-rce
 The RCE (Rover Compute Element) software component.
