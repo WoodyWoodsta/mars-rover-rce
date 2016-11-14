@@ -1,10 +1,13 @@
 /* kill-all.es6 */
 /**
- * Kill all processes spawned in a parent child process, and the child process itself
+ * @author Sean Wood (WoodyWoodsta)
  */
 
 import psTree from 'ps-tree';
 
+/**
+ * Kill all processes spawned in a parent child process, and the child process itself
+ */
 export function killAll(pid, signal = 'SIGKILL', callback = () => {}) {
   const killTree = true;
 

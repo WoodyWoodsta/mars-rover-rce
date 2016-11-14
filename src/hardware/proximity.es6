@@ -1,4 +1,8 @@
-/* leds.es6 */
+/* proximity.es6 */
+/**
+ * @author Sean Wood (WoodyWoodsta)
+ */
+
 import debug from 'debug';
 import * as five from 'johnny-five';
 
@@ -15,7 +19,7 @@ const log = debug('rce:proximity');
 export let hw = {};
 
 /**
- * Initialise the leds
+ * Initialise the sensors
  */
 export function init() {
   _onFrontSensorData.count = 0;
@@ -75,6 +79,10 @@ export function stop() {
   store.hardwareState.set('proximity.running', false);
 }
 
+/**
+ * Handle deinit and init of sensors based on the sensor group to activateSensorGroup
+ * @param  {String} group The group of sensors to activate
+ */
 export function activateSensorGroup(group) {
   if (store.hardwareState.proximity.activeGroup === 'nav' && group === 'head') {
     // Stop nav group sensors

@@ -1,4 +1,8 @@
-/* leds.es6 */
+/* camera.es6 */
+/**
+ * @author Sean Wood (WoodyWoodsta)
+ */
+
 import debug from 'debug';
 import child from 'child_process';
 import path from 'path';
@@ -29,6 +33,11 @@ export function init(callback) {
   store.hardwareState.set('camera.running', true);
 }
 
+/**
+ * Stop the camera process
+ * @param  {String}   exit     The type of exit that should be used to kill the process
+ * @param  {Function} callback A callback invoked in the event of an error?
+ */
 export function stop(exit, callback) {
   if (!exit) {
     store.hardwareState.set('camera.running', false);
@@ -43,6 +52,9 @@ export function stop(exit, callback) {
 }
 
 // === Private ===
+/**
+ * Spawn the child process, and retry for a specified number of times upon unsuccessful invocation
+ */
 function start() {
   camProcess = child.exec(config.hardware.cameraStartCmdLine, (err) => {
     log(`Camera closed with${(err) ? '' : 'out'} error${(err) ? `: ${err}` : ''}`);

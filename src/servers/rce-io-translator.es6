@@ -1,6 +1,11 @@
 /* rce-io-translator.es6 */
-import * as store from '../store';
+/**
+ * @author Sean Wood (WoodyWoodsta)
+ */
+
 import debug from 'debug';
+
+import * as store from '../store';
 import * as rceIO from './rce-io';
 import { save as saveTrims } from '../hardware/trims';
 import * as sequenceManager from '../sequences/sequence-manager';
@@ -24,6 +29,10 @@ export function onData(message) {
   }
 }
 
+/**
+ * Handle incoming post messages
+ * @param  {Object} event The incoming property change event
+ */
 export function onPost(event) {
   switch (event.data.type) {
     case 'upload-sequence':
@@ -43,6 +52,10 @@ export function onPost(event) {
   }
 }
 
+/**
+ * Handle incoming request messages
+ * @param  {Object} event The incoming property change event
+ */
 export function onRequest(event) {
   switch (event.data.type) {
     // REVIEW: This should never be done if the request came from a Client, the rsvp server should *always* handle repush requests
@@ -63,6 +76,12 @@ export function onRequest(event) {
 }
 
 // === Outgoing ===
+/**
+ * Request a repush from a remote store
+ * @param  {String} storeName      The name of the remote store
+ * @param  {String} path           The path of the store to repush, or '*' for the entire thing
+ * @param  {Array}  [notifyees=[]] Custom notifiyees
+ */
 export function requestRepush(storeName, path, notifyees = []) {
   rceIO.sendRequest('repush', { storeName, path, notifyees });
 }

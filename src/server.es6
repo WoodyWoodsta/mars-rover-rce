@@ -1,4 +1,7 @@
 /* server.es6 */
+/**
+ * @author Sean Wood (WoodyWoodsta)
+ */
 
 import debug from 'debug';
 import Koa from 'koa';
@@ -13,6 +16,9 @@ const log = debug('rce:main');
 
 export let rceIO;
 
+/**
+ * Initialise the HTTP server
+ */
 export default function init() {
   log('Starting HTTP server...');
 

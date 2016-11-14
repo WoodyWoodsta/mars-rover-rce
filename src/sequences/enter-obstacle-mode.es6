@@ -1,5 +1,9 @@
 /* enter-obstacle-mode.es6 */
 /**
+ * @author Sean Wood (WoodyWoodsta)
+ */
+
+/**
  * Sequence invoked in case of an emergency (i.e. when an obstacle is detected or if the rover has run out of battery)
  *
  * Sequence:
@@ -12,6 +16,9 @@ import * as store from '../store';
 
 const log = debug('rce:sequence:obstacle');
 
+/**
+ * enter obstacle sequence
+ */
 export default function seq() {
   // Indicate a change of mode
   store.rceState.set('systemState', 'obstacle');

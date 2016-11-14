@@ -1,6 +1,6 @@
 /* rose.es6 */
 /**
- * Control process startpoint for incomming 'rose' control from the client
+ * @author Sean Wood (WoodyWoodsta)
  */
 
 import debug from 'debug';
@@ -26,6 +26,9 @@ export function deinit() {
   store.rceState.removeListener('controller.sequenceState-changed', _seqStateRelay);
 }
 
+/**
+ * Execute the sequence currently loaded in the store
+ */
 export function execSequence() {
   // Clear the sequence in lieu of new one
   currentSequence = [];
@@ -36,6 +39,10 @@ export function execSequence() {
 }
 
 // === Private ===
+/**
+ * Execute the sequence when the sequenceState changes to 'running'
+ * @param  {Object} event The incoming property change event
+ */
 function _seqStateRelay(event) {
   if (event.newValue === 'running') {
     execSequence();
@@ -237,6 +244,10 @@ function _decodeCommands() {
   });
 }
 
+/**
+ * Execute and pop the next command in the sequence
+ * @param  {Number} index The index of the next command to exectute
+ */
 function _popExecCommand(index) {
   if (index < currentSequence.length) {
     let _index = index;

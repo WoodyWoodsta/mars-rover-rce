@@ -1,5 +1,9 @@
 /* interactive.es6 */
 /**
+ * @author Sean Wood (WoodyWoodsta)
+ */
+
+/**
  * Control process startpoint for incomming 'interactive' control from the client
  */
 import * as store from '../store';
@@ -7,12 +11,18 @@ import * as dispatch from './dispatch';
 import * as commands from './commands';
 import { execSequence } from './rose';
 
+/**
+ * The RoverRotateCmd to use for the CCW button
+ */
 const rotateCCWCommand = new commands.RoverRotateCmd({
   duration: Infinity,
   velocity: 50,
   direction: 'ccw',
 });
 
+/**
+ * The RoverRotateCmd to use for the CW button
+ */
 const rotateCWCommand = new commands.RoverRotateCmd({
   duration: Infinity,
   velocity: 50,
@@ -48,7 +58,7 @@ export function deinit() {
   init._initialised = false;
 }
 
-// Interactive Relays
+// === Interactive Relays ===
 /**
  * Relay control inputs from the drive joystick input
  * @param  {Object} event The incomming property change event
@@ -99,6 +109,10 @@ function _headInputRelay(event) {
   });
 }
 
+/**
+ * Relay control input from the Rotate CCW button to the RoverRotateCmd command execution
+ * @param  {Object} event The incoming property change event
+ */
 function _rotateCCWInputRelay(event) {
   if (event.newValue && store.rceState.controller.sequenceState === 'off') {
     runningCCWCommand = true;
@@ -116,6 +130,10 @@ function _rotateCCWInputRelay(event) {
   }
 }
 
+/**
+ * Relay control input from the Rotate CW button to the RoverRotateCmd command execution
+ * @param  {Object} event The incoming property change event
+ */
 function _rotateCWInputRelay(event) {
   if (event.newValue && store.rceState.controller.sequenceState === 'off') {
     runningCWCommand = true;
@@ -134,6 +152,10 @@ function _rotateCWInputRelay(event) {
   }
 }
 
+/**
+ * Callback function for the completion of the RoverRotateCmd execution when the button is pressed
+ * @param  {Object} event The incoming property change event
+ */
 function _stopRoverCallback(event) {
   if (event.newValue === 'off') {
     console.log('Rover stopped by callback');
@@ -145,6 +167,9 @@ function _stopRoverCallback(event) {
   }
 }
 
+/**
+ * Stop the rover from rotating
+ */
 function _stopRover() {
   console.log('Stopping rover');
   _driveInputRelay({

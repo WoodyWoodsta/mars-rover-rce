@@ -1,4 +1,8 @@
 /* analog.es6 */
+/**
+ * @author Sean Wood (WoodyWoodsta)
+ */
+
 import debug from 'debug';
 import * as five from 'johnny-five';
 
@@ -25,6 +29,7 @@ export function init() {
 
   store.hardwareState.set('analog.initialised', true);
 
+  // Set warnings and upate readings based on a new analog data change event
   hw.battery.on('change', () => {
     const voltage = hw.battery.fscaleTo(0, 12.45);
     store.hardwareState.set('analog.values.battery', voltage);

@@ -1,4 +1,7 @@
 /* config.js */
+/**
+ * @author Sean Wood (WoodyWoodsta)
+ */
 
 export const config = {
   server: {

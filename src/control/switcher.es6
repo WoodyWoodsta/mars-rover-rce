@@ -1,6 +1,6 @@
 /* switcher.es6 */
 /**
- * Handles client switching control types
+ * @author Sean Wood (WoodyWoodsta)
  */
 
 import debug from 'debug';

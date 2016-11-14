@@ -1,5 +1,9 @@
 /* dispatch.es6 */
 /**
+ * @author Sean Wood (WoodyWoodsta)
+ */
+
+/**
  * Handles incomming commands and dispatches them to the state loop
  * Contains command translators and the executor
  *
@@ -14,7 +18,6 @@
     },
   },
 }
-
  */
 
 import debug from 'debug';
@@ -355,10 +358,20 @@ function _velocityToDuration(velocity) {
   return (1 - _velocity) * config.hardware.stateLoopMaxDuration;
 }
 
+/**
+ * Convert radians to degrees
+ * @param  {Number} rad The input angle in radians
+ * @return {Number}     The angle in degrees
+ */
 function rad2deg(rad) {
   return (rad / (2 * Math.PI)) * 360;
 }
 
+/**
+ * Convert degrees to radians
+ * @param  {Number} deg The input angle in degrees
+ * @return {Number}     The angle in radians
+ */
 function deg2rad(deg) {
   return (deg * (2 * Math.PI)) / 360;
 }

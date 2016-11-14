@@ -1,17 +1,21 @@
 /* startup.es6 */
 /**
+ * @author Sean Wood (WoodyWoodsta)
+ */
+
+/**
  * The very first sequence run at startup of the rover
  *
  * Sequence:
- *  - Start the servers ✓
- *  - Initialise the board ✓
+ *  - Start the servers
+ *  - Initialise the board
  *  - Register board listeners
- *  - Initialise analog inputs ✓
+ *  - Initialise analog inputs
  *  - Check vitals: only proceed if vitals pass
- *  - Initialise leds ✓
- *  - Initialise servos ✓
- *  - Initialise proximity sensors ✓
- *  - Initialise camera ✓
+ *  - Initialise leds
+ *  - Initialise servos
+ *  - Initialise proximity sensors
+ *  - Initialise camera
  *  - Establish connection with RSVP server
  *    - Sockets
  *    - WebRTC
@@ -35,6 +39,9 @@ import * as rceIOTranslator from '../servers/rce-io-translator';
 
 const log = debug('rce:sequence:startup');
 
+/**
+ * startup sequence
+ */
 export default function seq() {
   // Initialise the system
   system.init();
@@ -55,10 +62,16 @@ export default function seq() {
 
 // === Private ===
 
+/**
+ * Register the `Board` instance 'read' event listener
+ */
 function regBoardListeners() {
   boardDriver.board.on('ready', onBoardReady);
 }
 
+/**
+ * Continue with the sequence when the board is ready for component plugins
+ */
 function onBoardReady() {
   // Initialise the leds
   if (!store.hardwareState.leds.initialised) {

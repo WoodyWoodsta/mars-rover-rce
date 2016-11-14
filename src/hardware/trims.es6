@@ -1,4 +1,7 @@
 /* trims.es6 */
+/**
+ * @author Sean Wood (WoodyWoodsta)
+ */
 
 import fs from 'fs';
 import path from 'path';
@@ -11,6 +14,9 @@ const log = debug('rce:trims');
 const SERVOS_FILEPATH = path.join(__dirname, 'servo-trims.json');
 const PROXIMITY_FILEPATH = path.join(__dirname, 'proximity-trims.json');
 
+/**
+ * Local record of the servo trims
+ */
 export let servos = {
   offset: {
     driveFrontLeft: 2,
@@ -39,6 +45,9 @@ export let servos = {
   },
 };
 
+/**
+ * Local record of the proximity trims
+ */
 export let proximity = {
   modifiers: {
     front: _frontUsSensorMod,
@@ -47,6 +56,9 @@ export let proximity = {
   },
 };
 
+/**
+ * Initialise the trims module, saving or retreiving trim data from the filesystem
+ */
 export function init() {
   log('Checking for saved trim data...');
 
@@ -57,15 +69,7 @@ export function init() {
     readSaved('servos');
   }
 
-  // Proximity sensors trims first check and load
-  // if (!fs.existsSync(PROXIMITY_FILEPATH)) {
-  //   save('proximity');
-  // } else {
-  //   readSaved('proximity');
-  // }
-
   store.hardwareState.on('trims.servos-changed', _onServosChanged);
-
   log('Trims loaded');
 }
 
@@ -77,10 +81,6 @@ export function save(group) {
   if (!group || group === 'servos') {
     fs.writeFileSync(SERVOS_FILEPATH, JSON.stringify(servos));
   }
-
-  // if (!group || group === 'proximity') {
-  //   fs.writeFileSync(PROXIMITY_FILEPATH, JSON.stringify(proximity));
-  // }
 
   log('Trims saved to file');
 }
@@ -94,11 +94,6 @@ export function readSaved(group) {
     servos = JSON.parse(fs.readFileSync(SERVOS_FILEPATH));
     store.hardwareState.set('trims.servos', servos);
   }
-
-  // if ((!group || group === 'proximity') && fs.existsSync(PROXIMITY_FILEPATH)) {
-  //   proximity = JSON.parse(fs.readFileSync(PROXIMITY_FILEPATH));
-  //   store.hardwareState.set('trims.proximity', servos);
-  // }
 }
 
 // === Modifiers ===
@@ -115,6 +110,10 @@ function _headUsSensorMod(value) {
 }
 
 // === Private ===
+/**
+ * Trigger an update of the servo values when the servo trims changed
+ * @param  {Object} event The incoming property change event
+ */
 function _onServosChanged(event) {
   servos = event.newValue;
 

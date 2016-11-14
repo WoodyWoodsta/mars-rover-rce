@@ -1,4 +1,8 @@
 /* self-diagnostics.es6 */
+/**
+ * @author Sean Wood (WoodyWoodsta)
+ */
+
 import debug from 'debug';
 
 import { execSequence } from '../control/rose';
@@ -7,6 +11,9 @@ import * as store from '../store';
 
 const log = debug('rce:sequence:self-diagnostics');
 
+/**
+ * self diagnostics sequence
+ */
 export default function seq() {
   store.rceState.set('selfDiagnostics.running', true);
   const diagSequence = [];
@@ -209,6 +216,10 @@ export default function seq() {
 }
 
 // === Private ===
+/**
+ * Handle the end of the sequence execution
+ * @param  {Object} event Incoming property change evetn
+ */
 function _onSequenceStateChanged(event) {
   if (event.newValue === 'off') {
     store.rceState.set('selfDiagnostics.running', false);
@@ -218,6 +229,10 @@ function _onSequenceStateChanged(event) {
   store.rceState.removeListener('controller.currentSequenceIndex-changed', _onCurrentSequenceIndexChanged);
 }
 
+/**
+ * Output diagnostics state telemetry
+ * @param  {Object} event The incoming property change event
+ */
 function _onCurrentSequenceIndexChanged(event) {
   switch (event.newValue) {
     case 0:

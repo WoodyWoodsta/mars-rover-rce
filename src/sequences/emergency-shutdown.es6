@@ -1,5 +1,9 @@
 /* emergency-shutdown.es6 */
 /**
+ * @author Sean Wood (WoodyWoodsta)
+ */
+
+/**
  * Sequence invoked in case of an emergency (i.e. when an obstacle is detected or if the rover has run out of battery)
  *
  * Sequence:
@@ -13,6 +17,9 @@ import * as store from '../store';
 
 const log = debug('rce:sequence:emergency-shutdown');
 
+/**
+ * emergency shutdown sequence
+ */
 export default function seq() {
   store.rceState.set('systemState', 'emergency-shutdown');
 

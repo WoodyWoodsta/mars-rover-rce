@@ -1,7 +1,7 @@
 /* state.es6 */
-
-// Will manage updating the state of the hardware inputs in a timed loop
-// TODO: Needs to indicate when it is currently effecting signal curves
+/**
+ * @author Sean Wood (WoodyWoodsta)
+ */
 
 import debug from 'debug';
 import objectPath from 'object-path';
@@ -14,6 +14,10 @@ import * as servos from '../hardware/servos';
 let interval;
 
 const log = debug('rce:state-driver');
+
+/**
+ * The setpoints that are used to calculate the signals with which to drive the hardware
+ */
 export const setpoints = {
   servos: {
     driveFrontLeft: {
@@ -181,8 +185,10 @@ function _stateLoop() {
 /**
  * Evaluate the change between the driving signal and the current signal state.
  * If there is a difference, the change will be effected.
- * @param  {String} component   The name of the component in the setpoints object
- * @param  {String} pathToState Path in the store to the current state of that component
+ * @param  {String}   component   The name of the component in the setpoints object
+ * @param  {String}   pathToState Path in the store to the current state of that component
+ * @param  {Boolean}  bypass      Whether or not to check for a change. Setting to true will make sure the servo is driven in this
+ *                                loop
  */
 function _evalChange(component, pathToState, bypass) {
   const state = objectPath.get(store.hardwareState, pathToState);

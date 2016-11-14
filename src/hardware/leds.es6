@@ -1,4 +1,8 @@
 /* leds.es6 */
+/**
+ * @author Sean Wood (WoodyWoodsta)
+ */
+
 import debug from 'debug';
 import * as five from 'johnny-five';
 
@@ -47,6 +51,10 @@ export function tempBlink(ledInst, pulse, counts) {
 }
 
 // === Private ===
+/**
+ * Turn the LED on or off based on the store property
+ * @param  {Object} event The incoming property change event
+ */
 function _onTestLEDIsOnChanged(event) {
   hw.indicator[(event.newValue) ? 'on' : 'off']();
 }

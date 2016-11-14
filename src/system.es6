@@ -1,5 +1,9 @@
 /* system.es6 */
 /**
+ * @author Sean Wood (WoodyWoodsta)
+ */
+
+/**
  * Linux system and board related operations
  */
 import debug from 'debug';
@@ -16,6 +20,9 @@ export const rceMonitor = new MonitorPid(process.pid, { period: config.systemMon
 // Temporarily set cam pid to the node process pid for safety
 export const camMonitor = new MonitorPid(process.pid, { period: config.systemMonitor.period });
 
+/**
+ * Initialise the system components
+ */
 export function init() {
   rceMonitor.on('error', (err) => {
     log(`RCE Process Monitor reported error: ${err}`);
@@ -49,6 +56,9 @@ export function init() {
   process.on('beforeExit', _onBeforeExit);
 }
 
+/**
+ * Start monitoring camera and RCE processes
+ */
 export function startProcessMonitoring() {
   rceMonitor.start();
 
@@ -62,6 +72,9 @@ export function startProcessMonitoring() {
   log('Process monitoring started');
 }
 
+/**
+ * Stop monitoring the camera and RCE processes
+ */
 export function stopProcessMonitoring() {
   rceMonitor.stop();
   camMonitor.stop();
@@ -70,6 +83,9 @@ export function stopProcessMonitoring() {
 }
 
 // === Private ===
+/**
+ * Cath the exit event and execute the powerdown sequence when this is detected
+ */
 function _onBeforeExit() {
   sequenceManager.exec('powerDown');
 }

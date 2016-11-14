@@ -1,4 +1,8 @@
 /* servos.es6 */
+/**
+ * @author Sean Wood (WoodyWoodsta)
+ */
+
 import debug from 'debug';
 
 import * as five from 'johnny-five';
@@ -17,7 +21,7 @@ const log = debug('rce:board-servos');
 export let hw = {};
 
 /**
- * Initialise the leds
+ * Initialise the servos
  */
 export function init() {
   hw = {
@@ -119,7 +123,7 @@ export function init() {
 
   // Initialise the trims module
   initTrims();
-  
+
   // TODO: Do some servo centering and stuff here
 
   store.hardwareState.set('servos.initialised', true);

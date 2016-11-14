@@ -1,4 +1,8 @@
-/* sequences.es6 */
+/* sequence-manager.es6 */
+/**
+ * @author Sean Wood (WoodyWoodsta)
+ */
+
 import debug from 'debug';
 
 import startup from './startup';

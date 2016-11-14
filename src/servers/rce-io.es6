@@ -1,4 +1,8 @@
 /* rce-io.es6 */
+/**
+ * @author Sean Wood (WoodyWoodsta)
+ */
+
 import debug from 'debug';
 
 import * as store from '../store';
@@ -28,6 +32,11 @@ export default function init(socket) {
   socket.on('request', rceIOTranslator.onRequest);
 }
 
+/**
+ * Send a request messahe
+ * @param  {String} type    The request type
+ * @param  {Any}    payload The data associated with the message
+ */
 export function sendRequest(type, payload) {
   rceIO.broadcast('request', { type, payload });
 }
